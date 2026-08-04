@@ -1,6 +1,6 @@
 -- ============================================
--- ⚛︎ QUWES - Меню для Blox Strike
--- Версия: 0.7.0 (Красивое оформление)
+-- ⚛︎ QUWES v0.8.0 - Меню для Blox Strike
+-- Полностью рабочая версия
 -- ============================================
 
 local player = game.Players.LocalPlayer
@@ -11,7 +11,7 @@ local camera = workspace.CurrentCamera
 local mouse = player:GetMouse()
 
 -- ============================================
--- 📦 НАСТРОЙКИ
+-- НАСТРОЙКИ
 -- ============================================
 
 local aimbotSettings = {
@@ -33,7 +33,7 @@ local espSettings = {
 }
 
 -- ============================================
--- 🟣 ВОДЯНОЙ ЗНАК
+-- ВОДЯНОЙ ЗНАК
 -- ============================================
 
 local watermarkGui = Instance.new("ScreenGui")
@@ -47,7 +47,7 @@ Watermark.Size = UDim2.new(0, 200, 0, 30)
 Watermark.Position = UDim2.new(1, -210, 0, 10)
 Watermark.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
 Watermark.BackgroundTransparency = 0.2
-Watermark.Text = "⚛︎ QUWES v0.7.0 ⚛︎"
+Watermark.Text = "⚛︎ QUWES v0.8.0 ⚛︎"
 Watermark.TextColor3 = Color3.fromRGB(180, 130, 255)
 Watermark.TextSize = 15
 Watermark.Font = Enum.Font.GothamBold
@@ -59,7 +59,7 @@ WatermarkCorner.CornerRadius = UDim.new(0, 8)
 WatermarkCorner.Parent = Watermark
 
 -- ============================================
--- 🟣 FOV КРУГ
+-- FOV КРУГ
 -- ============================================
 
 local fovGui = Instance.new("ScreenGui")
@@ -83,7 +83,7 @@ FOVCorner.CornerRadius = UDim.new(1, 0)
 FOVCorner.Parent = FOVCircle
 
 -- ============================================
--- 🟣 ОСНОВНОЕ МЕНЮ (увеличенное и красивое)
+-- ОСНОВНОЕ МЕНЮ
 -- ============================================
 
 local gui = Instance.new("ScreenGui")
@@ -91,7 +91,6 @@ gui.Name = "QuwesGUI"
 gui.Parent = player:WaitForChild("PlayerGui")
 gui.Enabled = false
 
--- Главный контейнер
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
 MainFrame.Size = UDim2.new(0, 650, 0, 560)
@@ -105,7 +104,6 @@ local MainCorner = Instance.new("UICorner")
 MainCorner.CornerRadius = UDim.new(0, 16)
 MainCorner.Parent = MainFrame
 
--- Толстая неоновая рамка
 local NeonBorder = Instance.new("Frame")
 NeonBorder.Name = "NeonBorder"
 NeonBorder.Size = UDim2.new(1, 12, 1, 12)
@@ -120,7 +118,7 @@ BorderCorner.CornerRadius = UDim.new(0, 18)
 BorderCorner.Parent = NeonBorder
 
 -- ============================================
--- ХЕДЕР (красивый градиент)
+-- ХЕДЕР
 -- ============================================
 
 local Header = Instance.new("Frame")
@@ -136,7 +134,6 @@ local HeaderCorner = Instance.new("UICorner")
 HeaderCorner.CornerRadius = UDim.new(0, 16)
 HeaderCorner.Parent = Header
 
--- Логотип
 local Logo = Instance.new("TextLabel")
 Logo.Size = UDim2.new(0, 200, 1, 0)
 Logo.Position = UDim2.new(0, 15, 0, 0)
@@ -148,19 +145,17 @@ Logo.TextXAlignment = Enum.TextXAlignment.Left
 Logo.Font = Enum.Font.GothamBold
 Logo.Parent = Header
 
--- Версия с бейджиком
 local VersionLabel = Instance.new("TextLabel")
 VersionLabel.Size = UDim2.new(0, 120, 1, 0)
 VersionLabel.Position = UDim2.new(1, -130, 0, 0)
 VersionLabel.BackgroundTransparency = 1
-VersionLabel.Text = "v0.7.0"
+VersionLabel.Text = "v0.8.0"
 VersionLabel.TextColor3 = Color3.fromRGB(160, 130, 200)
 VersionLabel.TextSize = 14
 VersionLabel.TextXAlignment = Enum.TextXAlignment.Right
 VersionLabel.Font = Enum.Font.Gotham
 VersionLabel.Parent = Header
 
--- Статус
 local StatusDot = Instance.new("Frame")
 StatusDot.Size = UDim2.new(0, 10, 0, 10)
 StatusDot.Position = UDim2.new(0, 205, 0.5, -5)
@@ -182,7 +177,6 @@ StatusText.TextSize = 12
 StatusText.Font = Enum.Font.Gotham
 StatusText.Parent = Header
 
--- Кнопка закрытия
 local CloseButton = Instance.new("TextButton")
 CloseButton.Name = "CloseButton"
 CloseButton.Size = UDim2.new(0, 36, 0, 36)
@@ -204,7 +198,7 @@ CloseButton.MouseButton1Click:Connect(function()
 end)
 
 -- ============================================
--- ВКЛАДКИ (с ярким выделением)
+-- ВКЛАДКИ
 -- ============================================
 
 local TabContainer = Instance.new("Frame")
@@ -241,14 +235,12 @@ local function CreateTabButton(name, icon, position, parent)
     corner.Parent = btn
     
     local function SetActive()
-        -- Сброс всех вкладок
         for _, tab in pairs(tabs) do
             tab.BackgroundColor3 = Color3.fromRGB(40, 35, 60)
             tab.BackgroundTransparency = 0.6
             tab.TextColor3 = Color3.fromRGB(160, 150, 190)
             tab.BorderSizePixel = 0
         end
-        -- Активная вкладка
         btn.BackgroundColor3 = Color3.fromRGB(120, 60, 220)
         btn.BackgroundTransparency = 0.15
         btn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -288,7 +280,6 @@ local function ClearContent()
     contentObjects = {}
 end
 
--- КРАСИВЫЙ TOGGLE
 local function CreateToggleIcon(text, icon, position, parent, callback)
     local frame = Instance.new("Frame")
     frame.Size = UDim2.new(0.45, -5, 0, 42)
@@ -349,7 +340,6 @@ local function CreateToggleIcon(text, icon, position, parent, callback)
     return toggle
 end
 
--- КРАСИВЫЙ DROPDOWN
 local function CreateDropdownIcon(text, icon, position, parent, options, callback)
     local frame = Instance.new("Frame")
     frame.Size = UDim2.new(0.45, -5, 0, 42)
@@ -403,7 +393,7 @@ local function CreateDropdownIcon(text, icon, position, parent, options, callbac
 end
 
 -- ============================================
--- ⚔️ COMBAT
+-- КОНТЕНТ ВКЛАДОК
 -- ============================================
 
 local function CombatContent()
@@ -447,10 +437,6 @@ local function CombatContent()
     CreateToggleIcon("Auto Shoot", "🔫", 0.5, ContentContainer)
 end
 
--- ============================================
--- 👁️ VISUAL
--- ============================================
-
 local function VisualContent()
     ClearContent()
     
@@ -487,10 +473,6 @@ local function VisualContent()
         espSettings.Distance = state
     end)
 end
-
--- ============================================
--- 🎒 INVENTORY
--- ============================================
 
 local function InventoryContent()
     ClearContent()
@@ -531,7 +513,7 @@ local function UpdateContent(tab)
     end
 end
 
--- Активируем первую вкладку с выделением
+-- Активация первой вкладки
 tabs["Combat"].BackgroundColor3 = Color3.fromRGB(120, 60, 220)
 tabs["Combat"].BackgroundTransparency = 0.15
 tabs["Combat"].TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -547,14 +529,14 @@ local Footer = Instance.new("TextLabel")
 Footer.Size = UDim2.new(1, 0, 0, 30)
 Footer.Position = UDim2.new(0, 0, 1, -30)
 Footer.BackgroundTransparency = 1
-Footer.Text = "⚛︎ QUWES v0.7.0 • Blox Strike Edition"
+Footer.Text = "⚛︎ QUWES v0.8.0 • Blox Strike Edition"
 Footer.TextColor3 = Color3.fromRGB(100, 80, 150)
 Footer.TextSize = 12
 Footer.Font = Enum.Font.Gotham
 Footer.Parent = MainFrame
 
 -- ============================================
--- ⌨️ ОТКРЫТИЕ ПО ПРАВОМУ SHIFT
+-- ОТКРЫТИЕ ПО ПРАВОМУ SHIFT
 -- ============================================
 
 userInputService.InputBegan:Connect(function(input, gameProcessed)
@@ -594,7 +576,7 @@ runService.RenderStepped:Connect(function()
 end)
 
 -- ============================================
--- 🟣 ПУЛЬСАЦИЯ НЕОНА
+-- ПУЛЬСАЦИЯ НЕОНА
 -- ============================================
 
 coroutine.wrap(function()
@@ -617,7 +599,7 @@ coroutine.wrap(function()
 end)()
 
 -- ============================================
--- 📡 ESP
+-- ESP
 -- ============================================
 
 local espGui = Instance.new("ScreenGui")
@@ -731,14 +713,21 @@ runService.RenderStepped:Connect(function()
     CreateESP()
 end)
 
-game:GetService("Players").PlayerAdded:Connect(function() task.wait(0.5) CreateESP() end)
-game:GetService("Players").PlayerRemoving:Connect(function() task.wait(0.5) CreateESP() end)
+game:GetService("Players").PlayerAdded:Connect(function() 
+    task.wait(0.5) 
+    CreateESP() 
+end)
+
+game:GetService("Players").PlayerRemoving:Connect(function() 
+    task.wait(0.5) 
+    CreateESP() 
+end)
 
 task.wait(1)
 CreateESP()
 
 -- ============================================
--- 🎯 AIMBOT
+-- AIMBOT
 -- ============================================
 
 local function GetClosestPlayer()
@@ -797,4 +786,24 @@ mouse.WheelForward:Connect(function()
     if aimbotSettings.Mode == "FOV" then
         aimbotSettings.FOVRadius = math.min(aimbotSettings.FOVRadius + 10, 400)
         FOVCircle.Size = UDim2.new(0, aimbotSettings.FOVRadius * 2, 0, aimbotSettings.FOVRadius * 2)
-        FOVCircle.Position = UDim2.new(0.5, -aimbotSettings.FOVRadius
+        FOVCircle.Position = UDim2.new(0.5, -aimbotSettings.FOVRadius, 0.5, -aimbotSettings.FOVRadius)
+    end
+end)
+
+mouse.WheelBackward:Connect(function()
+    if aimbotSettings.Mode == "FOV" then
+        aimbotSettings.FOVRadius = math.max(aimbotSettings.FOVRadius - 10, 50)
+        FOVCircle.Size = UDim2.new(0, aimbotSettings.FOVRadius * 2, 0, aimbotSettings.FOVRadius * 2)
+        FOVCircle.Position = UDim2.new(0.5, -aimbotSettings.FOVRadius, 0.5, -aimbotSettings.FOVRadius)
+    end
+end)
+
+FOVCircle.Size = UDim2.new(0, aimbotSettings.FOVRadius * 2, 0, aimbotSettings.FOVRadius * 2)
+FOVCircle.Position = UDim2.new(0.5, -aimbotSettings.FOVRadius, 0.5, -aimbotSettings.FOVRadius)
+FOVCircle.Visible = false
+
+-- ============================================
+-- ЗАВЕРШЕНИЕ
+-- ============================================
+
+print("⚛︎ QUWES v0.8.0 загружен! Нажми Right Shift для открытия меню.")
