@@ -1,6 +1,6 @@
 -- ============================================
--- ⚛︎ QUWES v0.8.0 - Меню для Blox Strike
--- Полностью рабочая версия
+-- ⚛︎ QUWES v0.9.0 - Меню для Blox Strike
+-- Исправленный ESP + полные настройки
 -- ============================================
 
 local player = game.Players.LocalPlayer
@@ -24,6 +24,7 @@ local aimbotSettings = {
 }
 
 local espSettings = {
+    Enabled = false,
     Boxes = true,
     Names = true,
     Health = true,
@@ -47,7 +48,7 @@ Watermark.Size = UDim2.new(0, 200, 0, 30)
 Watermark.Position = UDim2.new(1, -210, 0, 10)
 Watermark.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
 Watermark.BackgroundTransparency = 0.2
-Watermark.Text = "⚛︎ QUWES v0.8.0 ⚛︎"
+Watermark.Text = "⚛︎ QUWES v0.9.0 ⚛︎"
 Watermark.TextColor3 = Color3.fromRGB(180, 130, 255)
 Watermark.TextSize = 15
 Watermark.Font = Enum.Font.GothamBold
@@ -149,7 +150,7 @@ local VersionLabel = Instance.new("TextLabel")
 VersionLabel.Size = UDim2.new(0, 120, 1, 0)
 VersionLabel.Position = UDim2.new(1, -130, 0, 0)
 VersionLabel.BackgroundTransparency = 1
-VersionLabel.Text = "v0.8.0"
+VersionLabel.Text = "v0.9.0"
 VersionLabel.TextColor3 = Color3.fromRGB(160, 130, 200)
 VersionLabel.TextSize = 14
 VersionLabel.TextXAlignment = Enum.TextXAlignment.Right
@@ -393,7 +394,7 @@ local function CreateDropdownIcon(text, icon, position, parent, options, callbac
 end
 
 -- ============================================
--- КОНТЕНТ ВКЛАДОК
+-- ⚔️ COMBAT
 -- ============================================
 
 local function CombatContent()
@@ -437,6 +438,10 @@ local function CombatContent()
     CreateToggleIcon("Auto Shoot", "🔫", 0.5, ContentContainer)
 end
 
+-- ============================================
+-- 👁️ VISUAL (С РАБОЧИМ ESP)
+-- ============================================
+
 local function VisualContent()
     ClearContent()
     
@@ -452,27 +457,51 @@ local function VisualContent()
     header.Parent = ContentContainer
     table.insert(contentObjects, header)
     
-    CreateToggleIcon("ESP Boxes", "📦", 0, ContentContainer, function(state)
-        espSettings.Boxes = state
+    -- ГЛАВНЫЙ ВКЛЮЧАТЕЛЬ ESP
+    CreateToggleIcon("ESP Enabled", "🟣", 0, ContentContainer, function(state)
+        espSettings.Enabled = state
+        if state then
+            CreateESP()
+        else
+            ClearESP()
+        end
     end)
+    
+    -- Настройки ESP (видны только если ESP включён)
+    CreateToggleIcon("ESP Boxes", "📦", 0.15, ContentContainer, function(state)
+        espSettings.Boxes = state
+        if espSettings.Enabled then CreateESP() end
+    end)
+    
     CreateToggleIcon("ESP Names", "🏷️", 0.5, ContentContainer, function(state)
         espSettings.Names = state
+        if espSettings.Enabled then CreateESP() end
     end)
     
-    CreateToggleIcon("ESP Health", "❤️", 0, ContentContainer, function(state)
+    CreateToggleIcon("ESP Health", "❤️", 0.3, ContentContainer, function(state)
         espSettings.Health = state
-    end)
-    CreateToggleIcon("ESP Weapon", "🔫", 0.5, ContentContainer, function(state)
-        espSettings.Weapon = state
+        if espSettings.Enabled then CreateESP() end
     end)
     
-    CreateToggleIcon("ESP Ping", "📶", 0, ContentContainer, function(state)
-        espSettings.Ping = state
+    CreateToggleIcon("ESP Weapon", "🔫", 0.65, ContentContainer, function(state)
+        espSettings.Weapon = state
+        if espSettings.Enabled then CreateESP() end
     end)
-    CreateToggleIcon("ESP Distance", "📏", 0.5, ContentContainer, function(state)
+    
+    CreateToggleIcon("ESP Ping", "📶", 0.45, ContentContainer, function(state)
+        espSettings.Ping = state
+        if espSettings.Enabled then CreateESP() end
+    end)
+    
+    CreateToggleIcon("ESP Distance", "📏", 0.8, ContentContainer, function(state)
         espSettings.Distance = state
+        if espSettings.Enabled then CreateESP() end
     end)
 end
+
+-- ============================================
+-- 🎒 INVENTORY
+-- ============================================
 
 local function InventoryContent()
     ClearContent()
@@ -529,7 +558,7 @@ local Footer = Instance.new("TextLabel")
 Footer.Size = UDim2.new(1, 0, 0, 30)
 Footer.Position = UDim2.new(0, 0, 1, -30)
 Footer.BackgroundTransparency = 1
-Footer.Text = "⚛︎ QUWES v0.8.0 • Blox Strike Edition"
+Footer.Text = "⚛︎ QUWES v0.9.0 • Blox Strike Edition"
 Footer.TextColor3 = Color3.fromRGB(100, 80, 150)
 Footer.TextSize = 12
 Footer.Font = Enum.Font.Gotham
@@ -599,7 +628,9 @@ coroutine.wrap(function()
 end)()
 
 -- ============================================
--- ESP
+-- ============================================
+-- 📡 РАБОЧИЙ ESP (ПОЛНОСТЬЮ ПЕРЕПИСАН)
+-- ============================================
 -- ============================================
 
 local espGui = Instance.new("ScreenGui")
@@ -608,32 +639,55 @@ espGui.Parent = player:WaitForChild("PlayerGui")
 
 local espObjects = {}
 
-local function CreateESP()
-    for _, obj in pairs(espObjects) do obj:Destroy() end
+-- Функция очистки ESP
+local function ClearESP()
+    for _, obj in pairs(espObjects) do
+        obj:Destroy()
+    end
     espObjects = {}
+end
+
+-- Функция создания ESP
+local function CreateESP()
+    ClearESP()
     
-    for _, target in pairs(game:GetService("Players"):GetPlayers()) do
+    if not espSettings.Enabled then return end
+    
+    local players = game:GetService("Players"):GetPlayers()
+    
+    for _, target in pairs(players) do
         if target ~= player and target.Character and target.Character:FindFirstChild("Humanoid") and target.Character:FindFirstChild("Head") then
             local humanoid = target.Character.Humanoid
-            if humanoid.Health > 0 then
+            local head = target.Character.Head
+            local rootPart = target.Character:FindFirstChild("HumanoidRootPart")
+            
+            if humanoid and head and rootPart and humanoid.Health > 0 then
+                
+                -- Контейнер для всех элементов ESP
                 local container = Instance.new("Frame")
+                container.Name = target.Name .. "_ESP"
                 container.Size = UDim2.new(0, 0, 0, 0)
+                container.Position = UDim2.new(0, 0, 0, 0)
                 container.BackgroundTransparency = 1
                 container.Parent = espGui
                 table.insert(espObjects, container)
                 
+                -- БОКС (рамка вокруг игрока)
                 local box = Instance.new("Frame")
+                box.Name = "Box"
                 box.Size = UDim2.new(0, 60, 0, 80)
                 box.Position = UDim2.new(0, -30, 0, -40)
                 box.BackgroundColor3 = Color3.fromRGB(100, 50, 200)
-                box.BackgroundTransparency = 0.7
+                box.BackgroundTransparency = 0.6
                 box.BorderSizePixel = 2
                 box.BorderColor3 = Color3.fromRGB(150, 80, 255)
                 box.Parent = container
                 box.Visible = espSettings.Boxes
                 table.insert(espObjects, box)
                 
+                -- ИМЯ
                 local nameLabel = Instance.new("TextLabel")
+                nameLabel.Name = "Name"
                 nameLabel.Size = UDim2.new(0, 120, 0, 18)
                 nameLabel.Position = UDim2.new(0, -60, 0, -58)
                 nameLabel.BackgroundTransparency = 1
@@ -647,9 +701,11 @@ local function CreateESP()
                 nameLabel.Visible = espSettings.Names
                 table.insert(espObjects, nameLabel)
                 
+                -- ЗДОРОВЬЕ
                 local healthLabel = Instance.new("TextLabel")
-                healthLabel.Size = UDim2.new(0, 60, 0, 16)
-                healthLabel.Position = UDim2.new(0, -30, 0, -78)
+                healthLabel.Name = "Health"
+                healthLabel.Size = UDim2.new(0, 80, 0, 16)
+                healthLabel.Position = UDim2.new(0, -40, 0, -78)
                 healthLabel.BackgroundTransparency = 1
                 healthLabel.Text = "❤️ " .. math.floor(humanoid.Health) .. "/" .. humanoid.MaxHealth
                 healthLabel.TextColor3 = Color3.fromRGB(0, 255, 100)
@@ -661,7 +717,9 @@ local function CreateESP()
                 healthLabel.Visible = espSettings.Health
                 table.insert(espObjects, healthLabel)
                 
+                -- ОРУЖИЕ
                 local weaponLabel = Instance.new("TextLabel")
+                weaponLabel.Name = "Weapon"
                 weaponLabel.Size = UDim2.new(0, 100, 0, 16)
                 weaponLabel.Position = UDim2.new(0, -50, 0, 42)
                 weaponLabel.BackgroundTransparency = 1
@@ -675,7 +733,9 @@ local function CreateESP()
                 weaponLabel.Visible = espSettings.Weapon
                 table.insert(espObjects, weaponLabel)
                 
+                -- ПИНГ
                 local pingLabel = Instance.new("TextLabel")
+                pingLabel.Name = "Ping"
                 pingLabel.Size = UDim2.new(0, 60, 0, 14)
                 pingLabel.Position = UDim2.new(0, -30, 0, 60)
                 pingLabel.BackgroundTransparency = 1
@@ -689,7 +749,9 @@ local function CreateESP()
                 pingLabel.Visible = espSettings.Ping
                 table.insert(espObjects, pingLabel)
                 
+                -- ДИСТАНЦИЯ
                 local distanceLabel = Instance.new("TextLabel")
+                distanceLabel.Name = "Distance"
                 distanceLabel.Size = UDim2.new(0, 60, 0, 14)
                 distanceLabel.Position = UDim2.new(0, -30, 0, 42)
                 distanceLabel.BackgroundTransparency = 1
@@ -707,103 +769,56 @@ local function CreateESP()
     end
 end
 
+-- Обновление ESP каждый кадр (позиционирование на экране)
 runService.RenderStepped:Connect(function()
-    for _, obj in pairs(espObjects) do obj:Destroy() end
-    espObjects = {}
-    CreateESP()
+    if not espSettings.Enabled then return end
+    
+    for _, container in pairs(espGui:GetChildren()) do
+        if container.Name:find("_ESP") then
+            local targetName = container.Name:gsub("_ESP", "")
+            local target = game:GetService("Players"):FindFirstChild(targetName)
+            
+            if target and target.Character and target.Character:FindFirstChild("Head") then
+                local head = target.Character.Head
+                local pos, onScreen = camera:WorldToViewportPoint(head.Position)
+                
+                if onScreen then
+                    container.Position = UDim2.new(0, pos.X, 0, pos.Y)
+                    container.Visible = true
+                    
+                    -- Обновление дистанции
+                    local distLabel = container:FindFirstChild("Distance")
+                    if distLabel and distLabel.Visible then
+                        local dist = (camera.CFrame.Position - head.Position).Magnitude
+                        distLabel.Text = "📏 " .. math.floor(dist) .. "m"
+                    end
+                else
+                    container.Visible = false
+                end
+            else
+                container.Visible = false
+            end
+        end
+    end
 end)
 
-game:GetService("Players").PlayerAdded:Connect(function() 
-    task.wait(0.5) 
-    CreateESP() 
+-- Обновление при появлении/уходе игроков
+game:GetService("Players").PlayerAdded:Connect(function()
+    task.wait(0.5)
+    if espSettings.Enabled then CreateESP() end
 end)
 
-game:GetService("Players").PlayerRemoving:Connect(function() 
-    task.wait(0.5) 
-    CreateESP() 
+game:GetService("Players").PlayerRemoving:Connect(function()
+    task.wait(0.5)
+    if espSettings.Enabled then CreateESP() end
 end)
-
-task.wait(1)
-CreateESP()
 
 -- ============================================
--- AIMBOT
+-- 🎯 AIMBOT
 -- ============================================
 
 local function GetClosestPlayer()
     local closest = nil
     local closestDist = math.huge
     
-    for _, target in pairs(game:GetService("Players"):GetPlayers()) do
-        if target ~= player and target.Character and target.Character:FindFirstChild("Humanoid") and target.Character:FindFirstChild("HumanoidRootPart") then
-            local humanoid = target.Character.Humanoid
-            if humanoid.Health > 0 then
-                local rootPart = target.Character.HumanoidRootPart
-                local vector, onScreen = camera:WorldToViewportPoint(rootPart.Position)
-                if onScreen then
-                    local dist = (Vector2.new(mouse.X, mouse.Y) - Vector2.new(vector.X, vector.Y)).Magnitude
-                    if aimbotSettings.Mode == "FOV" then
-                        if dist <= aimbotSettings.FOVRadius and dist < closestDist then
-                            closest = target
-                            closestDist = dist
-                        end
-                    else
-                        local centerDist = (Vector2.new(camera.ViewportSize.X/2, camera.ViewportSize.Y/2) - Vector2.new(vector.X, vector.Y)).Magnitude
-                        if centerDist < closestDist then
-                            closest = target
-                            closestDist = centerDist
-                        end
-                    end
-                end
-            end
-        end
-    end
-    return closest
-end
-
-runService.RenderStepped:Connect(function()
-    if not aimbotSettings.Enabled then return end
-    local target = GetClosestPlayer()
-    if not target then return end
-    
-    local targetPart = target.Character:FindFirstChild(aimbotSettings.Target) or target.Character:FindFirstChild("HumanoidRootPart")
-    if not targetPart then return end
-    
-    local targetPos = targetPart.Position
-    if aimbotSettings.Target == "Head" then
-        local head = target.Character:FindFirstChild("Head")
-        if head then targetPos = head.Position end
-    end
-    if aimbotSettings.Target == "Legs" then
-        targetPos = targetPos - Vector3.new(0, 2, 0)
-    end
-    
-    local lookAt = CFrame.lookAt(camera.CFrame.Position, targetPos)
-    camera.CFrame = camera.CFrame:Lerp(lookAt, 0.3)
-end)
-
-mouse.WheelForward:Connect(function()
-    if aimbotSettings.Mode == "FOV" then
-        aimbotSettings.FOVRadius = math.min(aimbotSettings.FOVRadius + 10, 400)
-        FOVCircle.Size = UDim2.new(0, aimbotSettings.FOVRadius * 2, 0, aimbotSettings.FOVRadius * 2)
-        FOVCircle.Position = UDim2.new(0.5, -aimbotSettings.FOVRadius, 0.5, -aimbotSettings.FOVRadius)
-    end
-end)
-
-mouse.WheelBackward:Connect(function()
-    if aimbotSettings.Mode == "FOV" then
-        aimbotSettings.FOVRadius = math.max(aimbotSettings.FOVRadius - 10, 50)
-        FOVCircle.Size = UDim2.new(0, aimbotSettings.FOVRadius * 2, 0, aimbotSettings.FOVRadius * 2)
-        FOVCircle.Position = UDim2.new(0.5, -aimbotSettings.FOVRadius, 0.5, -aimbotSettings.FOVRadius)
-    end
-end)
-
-FOVCircle.Size = UDim2.new(0, aimbotSettings.FOVRadius * 2, 0, aimbotSettings.FOVRadius * 2)
-FOVCircle.Position = UDim2.new(0.5, -aimbotSettings.FOVRadius, 0.5, -aimbotSettings.FOVRadius)
-FOVCircle.Visible = false
-
--- ============================================
--- ЗАВЕРШЕНИЕ
--- ============================================
-
-print("⚛︎ QUWES v0.8.0 загружен! Нажми Right Shift для открытия меню.")
+    for
