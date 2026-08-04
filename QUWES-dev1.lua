@@ -1,7 +1,6 @@
 -- ============================================
--- ⚛︎ QUWES Xeno Edition - Меню для Blox Strike
--- Стиль: Xeno Dark / С колонками / Красиво
--- Версия: 0.5.0
+-- ⚛︎ QUWES - Меню для Blox Strike
+-- Версия: 0.7.0 (Красивое оформление)
 -- ============================================
 
 local player = game.Players.LocalPlayer
@@ -44,11 +43,11 @@ watermarkGui.IgnoreGuiInset = true
 
 local Watermark = Instance.new("TextLabel")
 Watermark.Name = "Watermark"
-Watermark.Size = UDim2.new(0, 220, 0, 32)
-Watermark.Position = UDim2.new(1, -230, 0, 10)
+Watermark.Size = UDim2.new(0, 200, 0, 30)
+Watermark.Position = UDim2.new(1, -210, 0, 10)
 Watermark.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
 Watermark.BackgroundTransparency = 0.2
-Watermark.Text = "⚛︎ QUWES XENO v0.5.0 ⚛︎"
+Watermark.Text = "⚛︎ QUWES v0.7.0 ⚛︎"
 Watermark.TextColor3 = Color3.fromRGB(180, 130, 255)
 Watermark.TextSize = 15
 Watermark.Font = Enum.Font.GothamBold
@@ -84,78 +83,78 @@ FOVCorner.CornerRadius = UDim.new(1, 0)
 FOVCorner.Parent = FOVCircle
 
 -- ============================================
--- 🟣 ОСНОВНОЕ МЕНЮ (с колонками)
+-- 🟣 ОСНОВНОЕ МЕНЮ (увеличенное и красивое)
 -- ============================================
 
 local gui = Instance.new("ScreenGui")
-gui.Name = "QuwesXenoGUI"
+gui.Name = "QuwesGUI"
 gui.Parent = player:WaitForChild("PlayerGui")
 gui.Enabled = false
 
--- Главный контейнер (шире, чтобы поместились колонки)
+-- Главный контейнер
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
-MainFrame.Size = UDim2.new(0, 600, 0, 520)
-MainFrame.Position = UDim2.new(0.5, -300, 0.5, -260)
-MainFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 28)
-MainFrame.BackgroundTransparency = 0.08
+MainFrame.Size = UDim2.new(0, 650, 0, 560)
+MainFrame.Position = UDim2.new(0.5, -325, 0.5, -280)
+MainFrame.BackgroundColor3 = Color3.fromRGB(12, 12, 22)
+MainFrame.BackgroundTransparency = 0.05
 MainFrame.BorderSizePixel = 0
 MainFrame.Parent = gui
 
 local MainCorner = Instance.new("UICorner")
-MainCorner.CornerRadius = UDim.new(0, 12)
+MainCorner.CornerRadius = UDim.new(0, 16)
 MainCorner.Parent = MainFrame
 
--- Тонкая неоновая рамка
+-- Толстая неоновая рамка
 local NeonBorder = Instance.new("Frame")
 NeonBorder.Name = "NeonBorder"
-NeonBorder.Size = UDim2.new(1, 8, 1, 8)
-NeonBorder.Position = UDim2.new(0, -4, 0, -4)
-NeonBorder.BackgroundColor3 = Color3.fromRGB(120, 60, 220)
-NeonBorder.BackgroundTransparency = 0.7
+NeonBorder.Size = UDim2.new(1, 12, 1, 12)
+NeonBorder.Position = UDim2.new(0, -6, 0, -6)
+NeonBorder.BackgroundColor3 = Color3.fromRGB(130, 60, 230)
+NeonBorder.BackgroundTransparency = 0.6
 NeonBorder.BorderSizePixel = 0
 NeonBorder.Parent = MainFrame
 
 local BorderCorner = Instance.new("UICorner")
-BorderCorner.CornerRadius = UDim.new(0, 14)
+BorderCorner.CornerRadius = UDim.new(0, 18)
 BorderCorner.Parent = NeonBorder
 
 -- ============================================
--- ХЕДЕР
+-- ХЕДЕР (красивый градиент)
 -- ============================================
 
 local Header = Instance.new("Frame")
 Header.Name = "Header"
-Header.Size = UDim2.new(1, 0, 0, 55)
+Header.Size = UDim2.new(1, 0, 0, 60)
 Header.Position = UDim2.new(0, 0, 0, 0)
-Header.BackgroundColor3 = Color3.fromRGB(25, 25, 38)
-Header.BackgroundTransparency = 0.3
+Header.BackgroundColor3 = Color3.fromRGB(25, 20, 45)
+Header.BackgroundTransparency = 0.2
 Header.BorderSizePixel = 0
 Header.Parent = MainFrame
 
 local HeaderCorner = Instance.new("UICorner")
-HeaderCorner.CornerRadius = UDim.new(0, 12)
+HeaderCorner.CornerRadius = UDim.new(0, 16)
 HeaderCorner.Parent = Header
 
 -- Логотип
 local Logo = Instance.new("TextLabel")
-Logo.Size = UDim2.new(0, 160, 1, 0)
+Logo.Size = UDim2.new(0, 200, 1, 0)
 Logo.Position = UDim2.new(0, 15, 0, 0)
 Logo.BackgroundTransparency = 1
-Logo.Text = "⚛︎ QUWES XENO"
-Logo.TextColor3 = Color3.fromRGB(200, 150, 255)
-Logo.TextSize = 18
+Logo.Text = "⚛︎ QUWES"
+Logo.TextColor3 = Color3.fromRGB(210, 160, 255)
+Logo.TextSize = 22
 Logo.TextXAlignment = Enum.TextXAlignment.Left
 Logo.Font = Enum.Font.GothamBold
 Logo.Parent = Header
 
--- Версия
+-- Версия с бейджиком
 local VersionLabel = Instance.new("TextLabel")
-VersionLabel.Size = UDim2.new(0, 100, 1, 0)
-VersionLabel.Position = UDim2.new(1, -120, 0, 0)
+VersionLabel.Size = UDim2.new(0, 120, 1, 0)
+VersionLabel.Position = UDim2.new(1, -130, 0, 0)
 VersionLabel.BackgroundTransparency = 1
-VersionLabel.Text = "v0.5.0"
-VersionLabel.TextColor3 = Color3.fromRGB(140, 140, 180)
+VersionLabel.Text = "v0.7.0"
+VersionLabel.TextColor3 = Color3.fromRGB(160, 130, 200)
 VersionLabel.TextSize = 14
 VersionLabel.TextXAlignment = Enum.TextXAlignment.Right
 VersionLabel.Font = Enum.Font.Gotham
@@ -163,8 +162,8 @@ VersionLabel.Parent = Header
 
 -- Статус
 local StatusDot = Instance.new("Frame")
-StatusDot.Size = UDim2.new(0, 8, 0, 8)
-StatusDot.Position = UDim2.new(0, 165, 0.5, -4)
+StatusDot.Size = UDim2.new(0, 10, 0, 10)
+StatusDot.Position = UDim2.new(0, 205, 0.5, -5)
 StatusDot.BackgroundColor3 = Color3.fromRGB(0, 255, 100)
 StatusDot.BorderSizePixel = 0
 StatusDot.Parent = Header
@@ -173,18 +172,28 @@ local StatusCorner = Instance.new("UICorner")
 StatusCorner.CornerRadius = UDim.new(1, 0)
 StatusCorner.Parent = StatusDot
 
+local StatusText = Instance.new("TextLabel")
+StatusText.Size = UDim2.new(0, 50, 0, 16)
+StatusText.Position = UDim2.new(0, 218, 0.5, -8)
+StatusText.BackgroundTransparency = 1
+StatusText.Text = "Онлайн"
+StatusText.TextColor3 = Color3.fromRGB(0, 255, 100)
+StatusText.TextSize = 12
+StatusText.Font = Enum.Font.Gotham
+StatusText.Parent = Header
+
 -- Кнопка закрытия
 local CloseButton = Instance.new("TextButton")
 CloseButton.Name = "CloseButton"
-CloseButton.Size = UDim2.new(0, 32, 0, 32)
-CloseButton.Position = UDim2.new(1, -42, 0, 12)
+CloseButton.Size = UDim2.new(0, 36, 0, 36)
+CloseButton.Position = UDim2.new(1, -48, 0.5, -18)
 CloseButton.BackgroundColor3 = Color3.fromRGB(60, 40, 80)
 CloseButton.BackgroundTransparency = 0.5
 CloseButton.Text = "✕"
-CloseButton.TextColor3 = Color3.fromRGB(200, 150, 200)
-CloseButton.TextSize = 16
+CloseButton.TextColor3 = Color3.fromRGB(220, 180, 220)
+CloseButton.TextSize = 18
 CloseButton.Font = Enum.Font.GothamBold
-CloseButton.Parent = MainFrame
+CloseButton.Parent = Header
 
 local CloseCorner = Instance.new("UICorner")
 CloseCorner.CornerRadius = UDim.new(1, 0)
@@ -195,17 +204,21 @@ CloseButton.MouseButton1Click:Connect(function()
 end)
 
 -- ============================================
--- ВКЛАДКИ
+-- ВКЛАДКИ (с ярким выделением)
 -- ============================================
 
 local TabContainer = Instance.new("Frame")
 TabContainer.Name = "TabContainer"
-TabContainer.Size = UDim2.new(1, 0, 0, 40)
-TabContainer.Position = UDim2.new(0, 0, 0, 55)
-TabContainer.BackgroundColor3 = Color3.fromRGB(20, 20, 32)
-TabContainer.BackgroundTransparency = 0.2
+TabContainer.Size = UDim2.new(1, -20, 0, 48)
+TabContainer.Position = UDim2.new(0, 10, 0, 65)
+TabContainer.BackgroundColor3 = Color3.fromRGB(18, 18, 32)
+TabContainer.BackgroundTransparency = 0.3
 TabContainer.BorderSizePixel = 0
 TabContainer.Parent = MainFrame
+
+local TabCorner = Instance.new("UICorner")
+TabCorner.CornerRadius = UDim.new(0, 10)
+TabCorner.Parent = TabContainer
 
 local tabs = {}
 local currentTab = "Combat"
@@ -215,27 +228,32 @@ local function CreateTabButton(name, icon, position, parent)
     btn.Name = name .. "Tab"
     btn.Size = UDim2.new(0.3, 0, 1, 0)
     btn.Position = UDim2.new(position, 0, 0, 0)
-    btn.BackgroundColor3 = Color3.fromRGB(40, 40, 60)
-    btn.BackgroundTransparency = 0.5
+    btn.BackgroundColor3 = Color3.fromRGB(40, 35, 60)
+    btn.BackgroundTransparency = 0.6
     btn.Text = icon .. " " .. name:upper()
-    btn.TextColor3 = Color3.fromRGB(180, 180, 210)
-    btn.TextSize = 13
+    btn.TextColor3 = Color3.fromRGB(160, 150, 190)
+    btn.TextSize = 15
     btn.Font = Enum.Font.GothamBold
     btn.Parent = parent
     
     local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 6)
+    corner.CornerRadius = UDim.new(0, 8)
     corner.Parent = btn
     
     local function SetActive()
+        -- Сброс всех вкладок
         for _, tab in pairs(tabs) do
-            tab.BackgroundColor3 = Color3.fromRGB(40, 40, 60)
-            tab.BackgroundTransparency = 0.5
-            tab.TextColor3 = Color3.fromRGB(180, 180, 210)
+            tab.BackgroundColor3 = Color3.fromRGB(40, 35, 60)
+            tab.BackgroundTransparency = 0.6
+            tab.TextColor3 = Color3.fromRGB(160, 150, 190)
+            tab.BorderSizePixel = 0
         end
-        btn.BackgroundColor3 = Color3.fromRGB(100, 50, 200)
-        btn.BackgroundTransparency = 0.2
+        -- Активная вкладка
+        btn.BackgroundColor3 = Color3.fromRGB(120, 60, 220)
+        btn.BackgroundTransparency = 0.15
         btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        btn.BorderSizePixel = 2
+        btn.BorderColor3 = Color3.fromRGB(180, 100, 255)
         currentTab = name
         UpdateContent(name)
     end
@@ -246,18 +264,18 @@ local function CreateTabButton(name, icon, position, parent)
     return btn
 end
 
-CreateTabButton("Combat", "⚔️", 0, TabContainer)
+CreateTabButton("Combat", "⚔️", 0.01, TabContainer)
 CreateTabButton("Visual", "👁️", 0.333, TabContainer)
 CreateTabButton("Inventory", "🎒", 0.666, TabContainer)
 
 -- ============================================
--- КОНТЕНТ С КОЛОНКАМИ
+-- КОНТЕНТ
 -- ============================================
 
 local ContentContainer = Instance.new("Frame")
 ContentContainer.Name = "ContentContainer"
-ContentContainer.Size = UDim2.new(1, -20, 1, -120)
-ContentContainer.Position = UDim2.new(0, 10, 0, 105)
+ContentContainer.Size = UDim2.new(1, -24, 1, -140)
+ContentContainer.Position = UDim2.new(0, 12, 0, 125)
 ContentContainer.BackgroundTransparency = 1
 ContentContainer.Parent = MainFrame
 
@@ -270,31 +288,28 @@ local function ClearContent()
     contentObjects = {}
 end
 
--- ============================================
--- ФУНКЦИИ СОЗДАНИЯ ЭЛЕМЕНТОВ
--- ============================================
-
--- Переключатель с иконкой (для колонок)
+-- КРАСИВЫЙ TOGGLE
 local function CreateToggleIcon(text, icon, position, parent, callback)
     local frame = Instance.new("Frame")
-    frame.Size = UDim2.new(0.45, 0, 0, 40)
+    frame.Size = UDim2.new(0.45, -5, 0, 42)
     frame.Position = UDim2.new(position, 0, 0, 0)
-    frame.BackgroundColor3 = Color3.fromRGB(25, 25, 40)
-    frame.BackgroundTransparency = 0.4
-    frame.BorderSizePixel = 0
+    frame.BackgroundColor3 = Color3.fromRGB(25, 22, 42)
+    frame.BackgroundTransparency = 0.5
+    frame.BorderSizePixel = 1
+    frame.BorderColor3 = Color3.fromRGB(50, 40, 80)
     frame.Parent = parent
     table.insert(contentObjects, frame)
     
     local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 6)
+    corner.CornerRadius = UDim.new(0, 8)
     corner.Parent = frame
     
     local label = Instance.new("TextLabel")
-    label.Size = UDim2.new(0.5, 0, 1, 0)
+    label.Size = UDim2.new(0.55, 0, 1, 0)
     label.Position = UDim2.new(0, 10, 0, 0)
     label.BackgroundTransparency = 1
     label.Text = icon .. " " .. text
-    label.TextColor3 = Color3.fromRGB(220, 220, 245)
+    label.TextColor3 = Color3.fromRGB(220, 215, 240)
     label.TextSize = 13
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.Font = Enum.Font.GothamBold
@@ -302,11 +317,11 @@ local function CreateToggleIcon(text, icon, position, parent, callback)
     table.insert(contentObjects, label)
     
     local toggle = Instance.new("TextButton")
-    toggle.Size = UDim2.new(0, 50, 0, 24)
-    toggle.Position = UDim2.new(0.8, 0, 0.5, -12)
-    toggle.BackgroundColor3 = Color3.fromRGB(50, 50, 80)
+    toggle.Size = UDim2.new(0, 52, 0, 26)
+    toggle.Position = UDim2.new(0.8, 0, 0.5, -13)
+    toggle.BackgroundColor3 = Color3.fromRGB(50, 45, 75)
     toggle.Text = "OFF"
-    toggle.TextColor3 = Color3.fromRGB(200, 100, 100)
+    toggle.TextColor3 = Color3.fromRGB(220, 120, 120)
     toggle.TextSize = 11
     toggle.Font = Enum.Font.GothamBold
     toggle.Parent = frame
@@ -320,13 +335,13 @@ local function CreateToggleIcon(text, icon, position, parent, callback)
     toggle.MouseButton1Click:Connect(function()
         state = not state
         if state then
-            toggle.BackgroundColor3 = Color3.fromRGB(60, 180, 120)
+            toggle.BackgroundColor3 = Color3.fromRGB(70, 190, 130)
             toggle.Text = "ON"
-            toggle.TextColor3 = Color3.fromRGB(120, 255, 180)
+            toggle.TextColor3 = Color3.fromRGB(150, 255, 200)
         else
-            toggle.BackgroundColor3 = Color3.fromRGB(50, 50, 80)
+            toggle.BackgroundColor3 = Color3.fromRGB(50, 45, 75)
             toggle.Text = "OFF"
-            toggle.TextColor3 = Color3.fromRGB(200, 100, 100)
+            toggle.TextColor3 = Color3.fromRGB(220, 120, 120)
         end
         if callback then callback(state) end
     end)
@@ -334,19 +349,20 @@ local function CreateToggleIcon(text, icon, position, parent, callback)
     return toggle
 end
 
--- Выпадающий список (для колонок)
+-- КРАСИВЫЙ DROPDOWN
 local function CreateDropdownIcon(text, icon, position, parent, options, callback)
     local frame = Instance.new("Frame")
-    frame.Size = UDim2.new(0.45, 0, 0, 40)
+    frame.Size = UDim2.new(0.45, -5, 0, 42)
     frame.Position = UDim2.new(position, 0, 0, 0)
-    frame.BackgroundColor3 = Color3.fromRGB(25, 25, 40)
-    frame.BackgroundTransparency = 0.4
-    frame.BorderSizePixel = 0
+    frame.BackgroundColor3 = Color3.fromRGB(25, 22, 42)
+    frame.BackgroundTransparency = 0.5
+    frame.BorderSizePixel = 1
+    frame.BorderColor3 = Color3.fromRGB(50, 40, 80)
     frame.Parent = parent
     table.insert(contentObjects, frame)
     
     local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 6)
+    corner.CornerRadius = UDim.new(0, 8)
     corner.Parent = frame
     
     local label = Instance.new("TextLabel")
@@ -354,7 +370,7 @@ local function CreateDropdownIcon(text, icon, position, parent, options, callbac
     label.Position = UDim2.new(0, 10, 0, 0)
     label.BackgroundTransparency = 1
     label.Text = icon .. " " .. text
-    label.TextColor3 = Color3.fromRGB(220, 220, 245)
+    label.TextColor3 = Color3.fromRGB(220, 215, 240)
     label.TextSize = 13
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.Font = Enum.Font.GothamBold
@@ -362,11 +378,11 @@ local function CreateDropdownIcon(text, icon, position, parent, options, callbac
     table.insert(contentObjects, label)
     
     local dropdown = Instance.new("TextButton")
-    dropdown.Size = UDim2.new(0.4, 0, 0, 24)
-    dropdown.Position = UDim2.new(0.55, 0, 0.5, -12)
-    dropdown.BackgroundColor3 = Color3.fromRGB(50, 50, 80)
+    dropdown.Size = UDim2.new(0.4, 0, 0, 26)
+    dropdown.Position = UDim2.new(0.55, 0, 0.5, -13)
+    dropdown.BackgroundColor3 = Color3.fromRGB(50, 45, 75)
     dropdown.Text = options[1]
-    dropdown.TextColor3 = Color3.fromRGB(200, 200, 230)
+    dropdown.TextColor3 = Color3.fromRGB(200, 190, 220)
     dropdown.TextSize = 12
     dropdown.Font = Enum.Font.GothamBold
     dropdown.Parent = frame
@@ -387,26 +403,24 @@ local function CreateDropdownIcon(text, icon, position, parent, options, callbac
 end
 
 -- ============================================
--- ⚔️ COMBAT (с колонками)
+-- ⚔️ COMBAT
 -- ============================================
 
 local function CombatContent()
     ClearContent()
     
-    -- Заголовок
     local header = Instance.new("TextLabel")
-    header.Size = UDim2.new(1, 0, 0, 25)
+    header.Size = UDim2.new(1, 0, 0, 28)
     header.Position = UDim2.new(0, 0, 0, 0)
     header.BackgroundTransparency = 1
     header.Text = "⚔️ COMBAT SETTINGS"
-    header.TextColor3 = Color3.fromRGB(200, 150, 255)
-    header.TextSize = 16
+    header.TextColor3 = Color3.fromRGB(210, 160, 255)
+    header.TextSize = 17
     header.Font = Enum.Font.GothamBold
     header.TextXAlignment = Enum.TextXAlignment.Left
     header.Parent = ContentContainer
     table.insert(contentObjects, header)
     
-    -- Ряд 1
     CreateToggleIcon("Aimbot", "🎯", 0, ContentContainer, function(state)
         aimbotSettings.Enabled = state
         FOVCircle.Visible = state and aimbotSettings.Mode == "FOV"
@@ -417,7 +431,6 @@ local function CombatContent()
         FOVCircle.Visible = aimbotSettings.Enabled and value == "FOV"
     end)
     
-    -- Ряд 2
     CreateDropdownIcon("Target", "🎯", 0, ContentContainer, {"Head", "Torso", "Legs"}, function(value)
         aimbotSettings.Target = value
     end)
@@ -427,35 +440,32 @@ local function CombatContent()
         FOVCircle.Visible = aimbotSettings.Enabled and aimbotSettings.Mode == "FOV" and state
     end)
     
-    -- Ряд 3
     CreateToggleIcon("Silent Aim", "🤫", 0, ContentContainer)
     CreateToggleIcon("Trigger Bot", "⚡", 0.5, ContentContainer)
     
-    -- Ряд 4
     CreateToggleIcon("Wall Hack", "🧱", 0, ContentContainer)
     CreateToggleIcon("Auto Shoot", "🔫", 0.5, ContentContainer)
 end
 
 -- ============================================
--- 👁️ VISUAL (с колонками)
+-- 👁️ VISUAL
 -- ============================================
 
 local function VisualContent()
     ClearContent()
     
     local header = Instance.new("TextLabel")
-    header.Size = UDim2.new(1, 0, 0, 25)
+    header.Size = UDim2.new(1, 0, 0, 28)
     header.Position = UDim2.new(0, 0, 0, 0)
     header.BackgroundTransparency = 1
     header.Text = "👁️ VISUAL SETTINGS"
-    header.TextColor3 = Color3.fromRGB(200, 150, 255)
-    header.TextSize = 16
+    header.TextColor3 = Color3.fromRGB(210, 160, 255)
+    header.TextSize = 17
     header.Font = Enum.Font.GothamBold
     header.TextXAlignment = Enum.TextXAlignment.Left
     header.Parent = ContentContainer
     table.insert(contentObjects, header)
     
-    -- Ряд 1
     CreateToggleIcon("ESP Boxes", "📦", 0, ContentContainer, function(state)
         espSettings.Boxes = state
     end)
@@ -463,7 +473,6 @@ local function VisualContent()
         espSettings.Names = state
     end)
     
-    -- Ряд 2
     CreateToggleIcon("ESP Health", "❤️", 0, ContentContainer, function(state)
         espSettings.Health = state
     end)
@@ -471,7 +480,6 @@ local function VisualContent()
         espSettings.Weapon = state
     end)
     
-    -- Ряд 3
     CreateToggleIcon("ESP Ping", "📶", 0, ContentContainer, function(state)
         espSettings.Ping = state
     end)
@@ -481,33 +489,30 @@ local function VisualContent()
 end
 
 -- ============================================
--- 🎒 INVENTORY (с колонками)
+-- 🎒 INVENTORY
 -- ============================================
 
 local function InventoryContent()
     ClearContent()
     
     local header = Instance.new("TextLabel")
-    header.Size = UDim2.new(1, 0, 0, 25)
+    header.Size = UDim2.new(1, 0, 0, 28)
     header.Position = UDim2.new(0, 0, 0, 0)
     header.BackgroundTransparency = 1
     header.Text = "🎒 INVENTORY SETTINGS"
-    header.TextColor3 = Color3.fromRGB(200, 150, 255)
-    header.TextSize = 16
+    header.TextColor3 = Color3.fromRGB(210, 160, 255)
+    header.TextSize = 17
     header.Font = Enum.Font.GothamBold
     header.TextXAlignment = Enum.TextXAlignment.Left
     header.Parent = ContentContainer
     table.insert(contentObjects, header)
     
-    -- Ряд 1
     CreateToggleIcon("Infinite Ammo", "♾️", 0, ContentContainer)
     CreateToggleIcon("No Reload", "🔄", 0.5, ContentContainer)
     
-    -- Ряд 2
     CreateToggleIcon("Fast Reload", "⚡", 0, ContentContainer)
     CreateToggleIcon("All Weapons", "🗡️", 0.5, ContentContainer)
     
-    -- Ряд 3
     CreateToggleIcon("Unlock Skins", "🎨", 0, ContentContainer)
     CreateToggleIcon("Auto Loot", "📦", 0.5, ContentContainer)
 end
@@ -526,9 +531,12 @@ local function UpdateContent(tab)
     end
 end
 
-tabs["Combat"].BackgroundColor3 = Color3.fromRGB(100, 50, 200)
-tabs["Combat"].BackgroundTransparency = 0.2
+-- Активируем первую вкладку с выделением
+tabs["Combat"].BackgroundColor3 = Color3.fromRGB(120, 60, 220)
+tabs["Combat"].BackgroundTransparency = 0.15
 tabs["Combat"].TextColor3 = Color3.fromRGB(255, 255, 255)
+tabs["Combat"].BorderSizePixel = 2
+tabs["Combat"].BorderColor3 = Color3.fromRGB(180, 100, 255)
 CombatContent()
 
 -- ============================================
@@ -536,12 +544,12 @@ CombatContent()
 -- ============================================
 
 local Footer = Instance.new("TextLabel")
-Footer.Size = UDim2.new(1, 0, 0, 28)
-Footer.Position = UDim2.new(0, 0, 1, -28)
+Footer.Size = UDim2.new(1, 0, 0, 30)
+Footer.Position = UDim2.new(0, 0, 1, -30)
 Footer.BackgroundTransparency = 1
-Footer.Text = "⚛︎ QUWES XENO v0.5.0 • Blox Strike Edition"
+Footer.Text = "⚛︎ QUWES v0.7.0 • Blox Strike Edition"
 Footer.TextColor3 = Color3.fromRGB(100, 80, 150)
-Footer.TextSize = 11
+Footer.TextSize = 12
 Footer.Font = Enum.Font.Gotham
 Footer.Parent = MainFrame
 
@@ -586,22 +594,22 @@ runService.RenderStepped:Connect(function()
 end)
 
 -- ============================================
--- 🟣 ПУЛЬСАЦИЯ
+-- 🟣 ПУЛЬСАЦИЯ НЕОНА
 -- ============================================
 
 coroutine.wrap(function()
     while gui.Parent do
         if gui.Enabled then
             tweenService:Create(NeonBorder, 
-                TweenInfo.new(1.2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
-                {BackgroundTransparency = 0.5}
+                TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
+                {BackgroundTransparency = 0.4}
             ):Play()
-            task.wait(1.2)
+            task.wait(1.5)
             tweenService:Create(NeonBorder, 
-                TweenInfo.new(1.2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
-                {BackgroundTransparency = 0.8}
+                TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
+                {BackgroundTransparency = 0.7}
             ):Play()
-            task.wait(1.2)
+            task.wait(1.5)
         else
             task.wait(0.5)
         end
@@ -789,18 +797,4 @@ mouse.WheelForward:Connect(function()
     if aimbotSettings.Mode == "FOV" then
         aimbotSettings.FOVRadius = math.min(aimbotSettings.FOVRadius + 10, 400)
         FOVCircle.Size = UDim2.new(0, aimbotSettings.FOVRadius * 2, 0, aimbotSettings.FOVRadius * 2)
-        FOVCircle.Position = UDim2.new(0.5, -aimbotSettings.FOVRadius, 0.5, -aimbotSettings.FOVRadius)
-    end
-end)
-
-mouse.WheelBackward:Connect(function()
-    if aimbotSettings.Mode == "FOV" then
-        aimbotSettings.FOVRadius = math.max(aimbotSettings.FOVRadius - 10, 50)
-        FOVCircle.Size = UDim2.new(0, aimbotSettings.FOVRadius * 2, 0, aimbotSettings.FOVRadius * 2)
-        FOVCircle.Position = UDim2.new(0.5, -aimbotSettings.FOVRadius, 0.5, -aimbotSettings.FOVRadius)
-    end
-end)
-
-FOVCircle.Size = UDim2.new(0, aimbotSettings.FOVRadius * 2, 0, aimbotSettings.FOVRadius * 2)
-FOVCircle.Position = UDim2.new(0.5, -aimbotSettings.FOVRadius, 0.5, -aimbotSettings.FOVRadius)
-FOVCircle.Visible = false
+        FOVCircle.Position = UDim2.new(0.5, -aimbotSettings.FOVRadius
