@@ -61,11 +61,13 @@ local function getEnemyFolder()
 end
 
 --// ==========================================
---// УЛУЧШЕННЫЙ AIMBOT + ПРОВЕРКА ВИДИМОСТИ
+--// AIMBOT – ТОЛЬКО НА ИГРОКОВ, ПЛАВНЫЙ, С ПРОВЕРКОЙ ВИДИМОСТИ
 --// ==========================================
 local AimbotEnabled = false
+local VisibilityCheck = true
 local ShowFOV = false
 local FOV_Radius = 300
+local Smoothing = 3
 
 local FOVCircle = Drawing.new("Circle")
 FOVCircle.Visible = false
@@ -73,9 +75,9 @@ FOVCircle.Filled = false
 FOVCircle.Thickness = 1
 FOVCircle.Color = Color3.fromRGB(255, 255, 255)
 
--- Функция проверки прямой видимости до головы врага
 local function IsEnemyVisible(enemyHead)
-    local enemyModel = enemyHead.Parent  -- модель персонажа
+    if not VisibilityCheck then return true end
+    local enemyModel = enemyHead.Parent
     if not enemyModel then return false end
 
     local origin = camera.CFrame.Position
@@ -85,7 +87,6 @@ local function IsEnemyVisible(enemyHead)
 
     local raycastParams = RaycastParams.new()
     raycastParams.FilterType = Enum.RaycastFilterType.Exclude
-    -- Игнорируем камеру и своего персонажа, чтобы луч не упирался в них
     local ignoreList = {camera}
     if player.Character then
         table.insert(ignoreList, player.Character)
@@ -95,23 +96,7 @@ local function IsEnemyVisible(enemyHead)
     local rayResult = Workspace:Raycast(origin, direction.Unit * distance, raycastParams)
     if rayResult and rayResult.Instance then
         local hitModel = rayResult.Instance:FindFirstAncestorOfClass("Model")
-        -- Если луч попал в любую часть того же врага, он видим
         return hitModel == enemyModel
-    end
-    return false
-end
-
--- Безопасное перемещение мыши (абсолют или относительное)
-local function safeMoveMouse(x, y)
-    if setmousepos then
-        setmousepos(x, y)
-        return true
-    end
-    local mousePos = UserInputService:GetMouseLocation()
-    local dx, dy = x - mousePos.X, y - mousePos.Y
-    if mousemoverel then
-        mousemoverel(dx, dy)
-        return true
     end
     return false
 end
@@ -125,18 +110,17 @@ local function getClosestEnemyToMouse()
     
     local mousePos = UserInputService:GetMouseLocation()
     
-    for _, enemy in ipairs(enemyFolder:GetChildren()) do
-        local hum = enemy:FindFirstChildOfClass("Humanoid")
-        local head = enemy:FindFirstChild("Head")
+    for _, enemyModel in ipairs(enemyFolder:GetChildren()) do
+        local hum = enemyModel:FindFirstChildOfClass("Humanoid")
+        local head = enemyModel:FindFirstChild("Head")
         
-        if hum and hum.Health > 0 and head then
+        if hum and hum.Health > 0 and head and head:IsA("BasePart") then
             local headPos, onScreen = camera:WorldToViewportPoint(head.Position)
-            if onScreen then
+            if onScreen and IsEnemyVisible(head) then
                 local distance = (Vector2.new(headPos.X, headPos.Y) - mousePos).Magnitude
-                -- Проверяем, что враг ближе всех И видим
-                if distance < shortestDistance and IsEnemyVisible(head) then
+                if distance < shortestDistance then
                     shortestDistance = distance
-                    closestEnemy = {Part = head, Pos = Vector2.new(headPos.X, headPos.Y)}
+                    closestEnemy = {Pos = Vector2.new(headPos.X, headPos.Y)}
                 end
             end
         end
@@ -145,7 +129,6 @@ local function getClosestEnemyToMouse()
 end
 
 RunService.RenderStepped:Connect(function()
-    -- FOV круг
     if ShowFOV then
         FOVCircle.Position = UserInputService:GetMouseLocation()
         FOVCircle.Radius = FOV_Radius
@@ -158,8 +141,13 @@ RunService.RenderStepped:Connect(function()
     
     local target = getClosestEnemyToMouse()
     if target then
-        -- Мгновенная наводка только на видимого врага
-        safeMoveMouse(target.Pos.X, target.Pos.Y)
+        local mousePos = UserInputService:GetMouseLocation()
+        local moveX = (target.Pos.X - mousePos.X) / Smoothing
+        local moveY = (target.Pos.Y - mousePos.Y) / Smoothing
+        
+        if mousemoverel then
+            mousemoverel(moveX, moveY)
+        end
     end
 end)
 
@@ -169,6 +157,13 @@ Tab_Combat:CreateToggle({
     CurrentValue = false,
     Flag = "AimbotToggle",
     Callback = function(Value) AimbotEnabled = Value end
+})
+
+Tab_Combat:CreateToggle({
+    Name = "Visibility Check (walls)",
+    CurrentValue = true,
+    Flag = "VisCheckToggle",
+    Callback = function(Value) VisibilityCheck = Value end
 })
 
 Tab_Combat:CreateToggle({
@@ -188,14 +183,14 @@ Tab_Combat:CreateSlider({
     Callback = function(Value) FOV_Radius = Value end
 })
 
--- Слайдер оставлен для совместимости (при абсолютном перемещении не используется)
 Tab_Combat:CreateSlider({
-    Name = "Smoothing (not used with instant lock)",
+    Name = "Aimbot Smoothing",
     Range = {1, 10},
     Increment = 1,
-    CurrentValue = 1,
+    Suffix = " (1 = instant)",
+    CurrentValue = 3,
     Flag = "AimbotSmoothing",
-    Callback = function() end
+    Callback = function(Value) Smoothing = Value end
 })
 
 --// ==========================================
