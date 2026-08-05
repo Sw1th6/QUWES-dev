@@ -1,7 +1,7 @@
 -- ============================================
--- ⚛︎ QUWES v0.9.0 - ИСПРАВЛЕННАЯ ВЕРСИЯ
--- Водяной знак СВЕРХУ | Меню ПОЛНОСТЬЮ РАБОТАЕТ
--- Нажми RightShift для открытия
+-- QUWES - ПОЛНЫЙ АВТОНОМНЫЙ СКРИПТ
+-- БЕЗ RAYFIELD | ВОДЯНОЙ ЗНАК СВЕРХУ СПРАВА
+-- НАЖМИ RightShift ДЛЯ ОТКРЫТИЯ МЕНЮ
 -- ============================================
 
 local player = game.Players.LocalPlayer
@@ -34,7 +34,7 @@ local espSettings = {
 }
 
 -- ============================================
--- ВОДЯНОЙ ЗНАК (СВЕРХУ СПРАВА) ✅ ИСПРАВЛЕНО
+-- ВОДЯНОЙ ЗНАК (СВЕРХУ СПРАВА)
 -- ============================================
 
 local watermarkGui = Instance.new("ScreenGui")
@@ -48,7 +48,7 @@ Watermark.Size = UDim2.new(0, 200, 0, 30)
 Watermark.Position = UDim2.new(1, -210, 0, 10) -- СВЕРХУ СПРАВА
 Watermark.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
 Watermark.BackgroundTransparency = 0.2
-Watermark.Text = "⚛︎ QUWES v0.9.0 ⚛︎"
+Watermark.Text = "⚛︎ QUWES v1.0 ⚛︎"
 Watermark.TextColor3 = Color3.fromRGB(180, 130, 255)
 Watermark.TextSize = 15
 Watermark.Font = Enum.Font.GothamBold
@@ -150,7 +150,7 @@ local VersionLabel = Instance.new("TextLabel")
 VersionLabel.Size = UDim2.new(0, 120, 1, 0)
 VersionLabel.Position = UDim2.new(1, -130, 0, 0)
 VersionLabel.BackgroundTransparency = 1
-VersionLabel.Text = "v0.9.0"
+VersionLabel.Text = "v1.0"
 VersionLabel.TextColor3 = Color3.fromRGB(160, 130, 200)
 VersionLabel.TextSize = 14
 VersionLabel.TextXAlignment = Enum.TextXAlignment.Right
@@ -167,6 +167,16 @@ StatusDot.Parent = Header
 local StatusCorner = Instance.new("UICorner")
 StatusCorner.CornerRadius = UDim.new(1, 0)
 StatusCorner.Parent = StatusDot
+
+local StatusText = Instance.new("TextLabel")
+StatusText.Size = UDim2.new(0, 50, 0, 16)
+StatusText.Position = UDim2.new(0, 218, 0.5, -8)
+StatusText.BackgroundTransparency = 1
+StatusText.Text = "Онлайн"
+StatusText.TextColor3 = Color3.fromRGB(0, 255, 100)
+StatusText.TextSize = 12
+StatusText.Font = Enum.Font.Gotham
+StatusText.Parent = Header
 
 local CloseButton = Instance.new("TextButton")
 CloseButton.Name = "CloseButton"
@@ -250,7 +260,7 @@ CreateTabButton("Visual", "👁️", 0.333)
 CreateTabButton("Inventory", "🎒", 0.666)
 
 -- ============================================
--- КОНТЕНТ
+-- КОНТЕНТ (СОДЕРЖИМОЕ ВКЛАДОК)
 -- ============================================
 
 local ContentContainer = Instance.new("Frame")
@@ -382,7 +392,7 @@ local function CreateDropdown(text, icon, position, options, callback)
 end
 
 -- ============================================
--- ⚔️ COMBAT (СОДЕРЖИМОЕ) ✅ ИСПРАВЛЕНО
+-- ⚔️ COMBAT
 -- ============================================
 
 local function CombatContent()
@@ -400,7 +410,6 @@ local function CombatContent()
     header.Parent = ContentContainer
     table.insert(contentObjects, header)
     
-    -- Строка 1
     CreateToggle("Aimbot", "🎯", 0, function(state)
         aimbotSettings.Enabled = state
         FOVCircle.Visible = state and aimbotSettings.Mode == "FOV"
@@ -411,7 +420,6 @@ local function CombatContent()
         FOVCircle.Visible = aimbotSettings.Enabled and value == "FOV"
     end)
     
-    -- Строка 2
     CreateDropdown("Target", "🎯", 0, {"Head", "Torso", "Legs"}, function(value)
         aimbotSettings.Target = value
     end)
@@ -421,17 +429,14 @@ local function CombatContent()
         FOVCircle.Visible = aimbotSettings.Enabled and aimbotSettings.Mode == "FOV" and state
     end)
     
-    -- Строка 3
     CreateToggle("Silent Aim", "🤫", 0)
     CreateToggle("Trigger Bot", "⚡", 0.5)
-    
-    -- Строка 4
     CreateToggle("Wall Hack", "🧱", 0)
     CreateToggle("Auto Shoot", "🔫", 0.5)
 end
 
 -- ============================================
--- 👁️ VISUAL (СОДЕРЖИМОЕ) ✅ ИСПРАВЛЕНО
+-- 👁️ VISUAL
 -- ============================================
 
 local function VisualContent()
@@ -449,7 +454,6 @@ local function VisualContent()
     header.Parent = ContentContainer
     table.insert(contentObjects, header)
     
-    -- Строка 1
     CreateToggle("ESP Enabled", "🟣", 0, function(state)
         espSettings.Enabled = state
         if state then CreateESP() else ClearESP() end
@@ -460,7 +464,6 @@ local function VisualContent()
         if espSettings.Enabled then CreateESP() end
     end)
     
-    -- Строка 2
     CreateToggle("ESP Names", "🏷️", 0, function(state)
         espSettings.Names = state
         if espSettings.Enabled then CreateESP() end
@@ -471,7 +474,6 @@ local function VisualContent()
         if espSettings.Enabled then CreateESP() end
     end)
     
-    -- Строка 3
     CreateToggle("ESP Weapon", "🔫", 0, function(state)
         espSettings.Weapon = state
         if espSettings.Enabled then CreateESP() end
@@ -482,7 +484,6 @@ local function VisualContent()
         if espSettings.Enabled then CreateESP() end
     end)
     
-    -- Строка 4
     CreateToggle("ESP Distance", "📏", 0, function(state)
         espSettings.Distance = state
         if espSettings.Enabled then CreateESP() end
@@ -490,7 +491,7 @@ local function VisualContent()
 end
 
 -- ============================================
--- 🎒 INVENTORY (СОДЕРЖИМОЕ) ✅ ИСПРАВЛЕНО
+-- 🎒 INVENTORY
 -- ============================================
 
 local function InventoryContent()
@@ -510,10 +511,8 @@ local function InventoryContent()
     
     CreateToggle("Infinite Ammo", "♾️", 0)
     CreateToggle("No Reload", "🔄", 0.5)
-    
     CreateToggle("Fast Reload", "⚡", 0)
     CreateToggle("All Weapons", "🗡️", 0.5)
-    
     CreateToggle("Unlock Skins", "🎨", 0)
     CreateToggle("Auto Loot", "📦", 0.5)
 end
@@ -548,7 +547,7 @@ local Footer = Instance.new("TextLabel")
 Footer.Size = UDim2.new(1, 0, 0, 30)
 Footer.Position = UDim2.new(0, 0, 1, -30)
 Footer.BackgroundTransparency = 1
-Footer.Text = "⚛︎ QUWES v0.9.0 • Blox Strike Edition"
+Footer.Text = "⚛︎ QUWES v1.0 • Blox Strike Edition"
 Footer.TextColor3 = Color3.fromRGB(100, 80, 150)
 Footer.TextSize = 12
 Footer.Font = Enum.Font.Gotham
@@ -649,7 +648,6 @@ local function CreateESP()
                 container.Parent = espGui
                 table.insert(espObjects, container)
                 
-                -- Бокс
                 local box = Instance.new("Frame")
                 box.Name = "Box"
                 box.Size = UDim2.new(0, 60, 0, 80)
@@ -662,7 +660,6 @@ local function CreateESP()
                 box.Visible = espSettings.Boxes
                 table.insert(espObjects, box)
                 
-                -- Имя
                 local nameLabel = Instance.new("TextLabel")
                 nameLabel.Name = "Name"
                 nameLabel.Size = UDim2.new(0, 120, 0, 18)
@@ -678,7 +675,6 @@ local function CreateESP()
                 nameLabel.Visible = espSettings.Names
                 table.insert(espObjects, nameLabel)
                 
-                -- Здоровье
                 local healthLabel = Instance.new("TextLabel")
                 healthLabel.Name = "Health"
                 healthLabel.Size = UDim2.new(0, 80, 0, 16)
@@ -694,7 +690,6 @@ local function CreateESP()
                 healthLabel.Visible = espSettings.Health
                 table.insert(espObjects, healthLabel)
                 
-                -- Оружие
                 local weaponLabel = Instance.new("TextLabel")
                 weaponLabel.Name = "Weapon"
                 weaponLabel.Size = UDim2.new(0, 100, 0, 16)
@@ -715,7 +710,6 @@ local function CreateESP()
     end
 end
 
--- Обновление ESP
 runService.RenderStepped:Connect(function()
     if not espSettings.Enabled then return end
     
@@ -731,12 +725,6 @@ runService.RenderStepped:Connect(function()
                 if onScreen then
                     container.Position = UDim2.new(0, pos.X, 0, pos.Y)
                     container.Visible = true
-                    
-                    local distLabel = container:FindFirstChild("Distance")
-                    if distLabel and distLabel.Visible then
-                        local dist = (camera.CFrame.Position - head.Position).Magnitude
-                        distLabel.Text = "📏 " .. math.floor(dist) .. "m"
-                    end
                 else
                     container.Visible = false
                 end
@@ -801,5 +789,5 @@ runService.RenderStepped:Connect(function()
     end
 end)
 
-print("⚛︎ QUWES v0.9.0 успешно загружен!")
+print("⚛︎ QUWES v1.0 успешно загружен!")
 print("Нажми RightShift для открытия меню")
