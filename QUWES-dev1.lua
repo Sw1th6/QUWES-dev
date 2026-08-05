@@ -61,20 +61,60 @@ local function getEnemyFolder()
 end
 
 --// ==========================================
---// AIMBOT & FOV LOGIC (улучшенный, всегда активен)
+--// УЛУЧШЕННЫЙ AIMBOT + ПРОВЕРКА ВИДИМОСТИ
 --// ==========================================
 local AimbotEnabled = false
 local ShowFOV = false
-local FOV_Radius = 150
-local Smoothing = 1
+local FOV_Radius = 300
 
 local FOVCircle = Drawing.new("Circle")
-FOVCircle.Position = Vector2.new(camera.ViewportSize.X / 2, camera.ViewportSize.Y / 2)
-FOVCircle.Radius = FOV_Radius
-FOVCircle.Filled = false
-FOVCircle.Color = Color3.fromRGB(255, 255, 255)
 FOVCircle.Visible = false
+FOVCircle.Filled = false
 FOVCircle.Thickness = 1
+FOVCircle.Color = Color3.fromRGB(255, 255, 255)
+
+-- Функция проверки прямой видимости до головы врага
+local function IsEnemyVisible(enemyHead)
+    local enemyModel = enemyHead.Parent  -- модель персонажа
+    if not enemyModel then return false end
+
+    local origin = camera.CFrame.Position
+    local direction = enemyHead.Position - origin
+    local distance = direction.Magnitude
+    if distance == 0 then return false end
+
+    local raycastParams = RaycastParams.new()
+    raycastParams.FilterType = Enum.RaycastFilterType.Exclude
+    -- Игнорируем камеру и своего персонажа, чтобы луч не упирался в них
+    local ignoreList = {camera}
+    if player.Character then
+        table.insert(ignoreList, player.Character)
+    end
+    raycastParams.FilterDescendantsInstances = ignoreList
+
+    local rayResult = Workspace:Raycast(origin, direction.Unit * distance, raycastParams)
+    if rayResult and rayResult.Instance then
+        local hitModel = rayResult.Instance:FindFirstAncestorOfClass("Model")
+        -- Если луч попал в любую часть того же врага, он видим
+        return hitModel == enemyModel
+    end
+    return false
+end
+
+-- Безопасное перемещение мыши (абсолют или относительное)
+local function safeMoveMouse(x, y)
+    if setmousepos then
+        setmousepos(x, y)
+        return true
+    end
+    local mousePos = UserInputService:GetMouseLocation()
+    local dx, dy = x - mousePos.X, y - mousePos.Y
+    if mousemoverel then
+        mousemoverel(dx, dy)
+        return true
+    end
+    return false
+end
 
 local function getClosestEnemyToMouse()
     local closestEnemy = nil
@@ -93,9 +133,10 @@ local function getClosestEnemyToMouse()
             local headPos, onScreen = camera:WorldToViewportPoint(head.Position)
             if onScreen then
                 local distance = (Vector2.new(headPos.X, headPos.Y) - mousePos).Magnitude
-                if distance < shortestDistance then
+                -- Проверяем, что враг ближе всех И видим
+                if distance < shortestDistance and IsEnemyVisible(head) then
                     shortestDistance = distance
-                    closestEnemy = head
+                    closestEnemy = {Part = head, Pos = Vector2.new(headPos.X, headPos.Y)}
                 end
             end
         end
@@ -104,6 +145,7 @@ local function getClosestEnemyToMouse()
 end
 
 RunService.RenderStepped:Connect(function()
+    -- FOV круг
     if ShowFOV then
         FOVCircle.Position = UserInputService:GetMouseLocation()
         FOVCircle.Radius = FOV_Radius
@@ -114,17 +156,10 @@ RunService.RenderStepped:Connect(function()
 
     if not AimbotEnabled or not isAlive() then return end
     
-    local targetHead = getClosestEnemyToMouse()
-    if targetHead then
-        local headPos = camera:WorldToViewportPoint(targetHead.Position)
-        local mousePos = UserInputService:GetMouseLocation()
-        
-        local moveX = (headPos.X - mousePos.X) / Smoothing
-        local moveY = (headPos.Y - mousePos.Y) / Smoothing
-        
-        if mousemoverel then
-            mousemoverel(moveX, moveY)
-        end
+    local target = getClosestEnemyToMouse()
+    if target then
+        -- Мгновенная наводка только на видимого врага
+        safeMoveMouse(target.Pos.X, target.Pos.Y)
     end
 end)
 
@@ -148,19 +183,19 @@ Tab_Combat:CreateSlider({
     Range = {10, 500},
     Increment = 10,
     Suffix = "px",
-    CurrentValue = 150,
+    CurrentValue = 300,
     Flag = "FOVSlider",
     Callback = function(Value) FOV_Radius = Value end
 })
 
+-- Слайдер оставлен для совместимости (при абсолютном перемещении не используется)
 Tab_Combat:CreateSlider({
-    Name = "Aimbot Smoothing",
+    Name = "Smoothing (not used with instant lock)",
     Range = {1, 10},
     Increment = 1,
-    Suffix = " (1 = instant)",
     CurrentValue = 1,
     Flag = "AimbotSmoothing",
-    Callback = function(Value) Smoothing = Value end
+    Callback = function() end
 })
 
 --// ==========================================
@@ -760,26 +795,23 @@ Rayfield:LoadConfiguration()
 --// ==========================================
 local WatermarkText = Drawing.new("Text")
 WatermarkText.Text = "QUWES"
-WatermarkText.Size = 50  -- было 20, стало 50 (20 * 2.5)
+WatermarkText.Size = 50
 WatermarkText.Color = Color3.fromRGB(160, 100, 255)
 WatermarkText.Outline = true
 WatermarkText.OutlineColor = Color3.new(0, 0, 0)
 WatermarkText.Center = false
 WatermarkText.Visible = true
 
--- Фон для водяного знака
 local WatermarkBg = Drawing.new("Square")
 WatermarkBg.Color = Color3.fromRGB(20, 20, 20)
 WatermarkBg.Filled = true
 WatermarkBg.Visible = true
 
--- Функция обновления позиции
 local function updateWatermarkPosition()
     local textSize = WatermarkText.Size
-    -- Примерная ширина текста (грубая оценка, зависит от шрифта)
-    local textWidth = #WatermarkText.Text * textSize * 0.6  -- подгонка
+    local textWidth = #WatermarkText.Text * textSize * 0.6
     local textHeight = textSize * 1.2
-    local x = camera.ViewportSize.X - textWidth - 20  -- отступ от правого края
+    local x = camera.ViewportSize.X - textWidth - 20
     local y = 10
 
     WatermarkText.Position = Vector2.new(x, y)
@@ -788,5 +820,4 @@ local function updateWatermarkPosition()
 end
 
 updateWatermarkPosition()
-
 camera:GetPropertyChangedSignal("ViewportSize"):Connect(updateWatermarkPosition)
