@@ -61,13 +61,14 @@ local function getEnemyFolder()
 end
 
 --// ==========================================
---// AIMBOT – ТОЛЬКО НА ИГРОКОВ, ПЛАВНЫЙ, С ПРОВЕРКОЙ ВИДИМОСТИ
+--// AIMBOT – HvH / LEGIT РЕЖИМЫ
 --// ==========================================
 local AimbotEnabled = false
-local VisibilityCheck = true
+local AimbotMode = "HvH"  -- "HvH" или "Legit"
 local ShowFOV = false
-local FOV_Radius = 300
-local Smoothing = 3
+local FOV_Radius = 350
+local Smoothing = 1
+local VisibilityCheck = false
 
 local FOVCircle = Drawing.new("Circle")
 FOVCircle.Visible = false
@@ -159,11 +160,37 @@ Tab_Combat:CreateToggle({
     Callback = function(Value) AimbotEnabled = Value end
 })
 
+Tab_Combat:CreateDropdown({
+    Name = "Aimbot Mode",
+    Options = {"HvH", "Legit"},
+    CurrentOption = {"HvH"},
+    MultipleOptions = false,
+    Flag = "AimbotMode",
+    Callback = function(Options)
+        AimbotMode = Options[1]
+        if AimbotMode == "HvH" then
+            -- HvH: мгновенный лок, большой FOV, без проверки стен
+            Smoothing = 1
+            FOV_Radius = 350
+            VisibilityCheck = false
+            FOVCircle.Color = Color3.fromRGB(255, 0, 0)  -- Красный FOV для HvH
+        else
+            -- Legit: плавный аим, средний FOV, проверка стен
+            Smoothing = 5
+            FOV_Radius = 150
+            VisibilityCheck = true
+            FOVCircle.Color = Color3.fromRGB(0, 255, 0)  -- Зелёный FOV для Legit
+        end
+    end
+})
+
 Tab_Combat:CreateToggle({
     Name = "Visibility Check (walls)",
-    CurrentValue = true,
+    CurrentValue = false,
     Flag = "VisCheckToggle",
-    Callback = function(Value) VisibilityCheck = Value end
+    Callback = function(Value) 
+        VisibilityCheck = Value
+    end
 })
 
 Tab_Combat:CreateToggle({
@@ -178,7 +205,7 @@ Tab_Combat:CreateSlider({
     Range = {10, 500},
     Increment = 10,
     Suffix = "px",
-    CurrentValue = 300,
+    CurrentValue = 350,
     Flag = "FOVSlider",
     Callback = function(Value) FOV_Radius = Value end
 })
@@ -188,7 +215,7 @@ Tab_Combat:CreateSlider({
     Range = {1, 10},
     Increment = 1,
     Suffix = " (1 = instant)",
-    CurrentValue = 3,
+    CurrentValue = 1,
     Flag = "AimbotSmoothing",
     Callback = function(Value) Smoothing = Value end
 })
