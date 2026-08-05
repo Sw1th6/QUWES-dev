@@ -766,3 +766,18 @@ task.spawn(function()
 end)
 
 Rayfield:LoadConfiguration()
+
+-- WATERMARK
+local Watermark = Drawing.new("Text")
+Watermark.Text = "QUWES"
+Watermark.Size = 20
+Watermark.Color = Color3.fromRGB(160, 100, 255)  -- фиолетовый
+Watermark.Outline = true
+Watermark.OutlineColor = Color3.new(0, 0, 0)
+Watermark.Center = false
+Watermark.Visible = true
+Watermark.Position = Vector2.new(camera.ViewportSize.X - 100, 10)
+
+camera:GetPropertyChangedSignal("ViewportSize"):Connect(function()
+    Watermark.Position = Vector2.new(camera.ViewportSize.X - 100, 10)
+end)
