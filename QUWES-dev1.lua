@@ -8,7 +8,7 @@ local Window = Rayfield:CreateWindow({
     LoadingTitle = "loading QUWES (Blox Strike)",
     LoadingSubtitle = "by .Sparky9971",
     ShowText = "Menu",
-    Theme = "Amethyst",  -- фиолетовая тема
+    Theme = "Amethyst",
     ToggleUIKeybind = Enum.KeyCode.RightShift,
     DisableRayfieldPrompts = false,
     DisableBuildWarnings = false,
@@ -61,14 +61,12 @@ local function getEnemyFolder()
 end
 
 --// ==========================================
---// AIMBOT & FOV LOGIC
+--// AIMBOT & FOV LOGIC (улучшенный, всегда активен)
 --// ==========================================
 local AimbotEnabled = false
 local ShowFOV = false
-local FOV_Radius = 100
-local Smoothing = 3
-local AimKey = Enum.UserInputType.MouseButton2
-local isAiming = false
+local FOV_Radius = 150
+local Smoothing = 1
 
 local FOVCircle = Drawing.new("Circle")
 FOVCircle.Position = Vector2.new(camera.ViewportSize.X / 2, camera.ViewportSize.Y / 2)
@@ -105,14 +103,6 @@ local function getClosestEnemyToMouse()
     return closestEnemy
 end
 
-UserInputService.InputBegan:Connect(function(input)
-    if input.UserInputType == AimKey then isAiming = true end
-end)
-
-UserInputService.InputEnded:Connect(function(input)
-    if input.UserInputType == AimKey then isAiming = false end
-end)
-
 RunService.RenderStepped:Connect(function()
     if ShowFOV then
         FOVCircle.Position = UserInputService:GetMouseLocation()
@@ -122,7 +112,7 @@ RunService.RenderStepped:Connect(function()
         FOVCircle.Visible = false
     end
 
-    if not isAiming or not isAlive() or not AimbotEnabled then return end
+    if not AimbotEnabled or not isAlive() then return end
     
     local targetHead = getClosestEnemyToMouse()
     if targetHead then
@@ -140,7 +130,7 @@ end)
 
 Tab_Combat:CreateSection("Aimbot Settings")
 Tab_Combat:CreateToggle({
-    Name = "Enable Aimbot (Hold Right Click)",
+    Name = "Enable Aimbot (Always On)",
     CurrentValue = false,
     Flag = "AimbotToggle",
     Callback = function(Value) AimbotEnabled = Value end
@@ -158,7 +148,7 @@ Tab_Combat:CreateSlider({
     Range = {10, 500},
     Increment = 10,
     Suffix = "px",
-    CurrentValue = 100,
+    CurrentValue = 150,
     Flag = "FOVSlider",
     Callback = function(Value) FOV_Radius = Value end
 })
@@ -167,8 +157,8 @@ Tab_Combat:CreateSlider({
     Name = "Aimbot Smoothing",
     Range = {1, 10},
     Increment = 1,
-    Suffix = " (Lower is faster)",
-    CurrentValue = 3,
+    Suffix = " (1 = instant)",
+    CurrentValue = 1,
     Flag = "AimbotSmoothing",
     Callback = function(Value) Smoothing = Value end
 })
@@ -268,7 +258,6 @@ task.spawn(function()
                 local hum = enemy:FindFirstChildOfClass("Humanoid")
                 
                 if head and hum and hum.Health > 0 then
-                    -- Cache original size if not saved
                     if not originalHeadSizes[head] then
                         originalHeadSizes[head] = head.Size
                     end
@@ -278,7 +267,6 @@ task.spawn(function()
                         head.CanCollide = false
                         head.Transparency = 0.5
                     else
-                        -- Revert to normal if disabled
                         if originalHeadSizes[head] and head.Size ~= originalHeadSizes[head] then
                             head.Size = originalHeadSizes[head]
                             head.Transparency = 0
@@ -767,17 +755,38 @@ end)
 
 Rayfield:LoadConfiguration()
 
--- WATERMARK
-local Watermark = Drawing.new("Text")
-Watermark.Text = "QUWES"
-Watermark.Size = 20
-Watermark.Color = Color3.fromRGB(160, 100, 255)  -- фиолетовый
-Watermark.Outline = true
-Watermark.OutlineColor = Color3.new(0, 0, 0)
-Watermark.Center = false
-Watermark.Visible = true
-Watermark.Position = Vector2.new(camera.ViewportSize.X - 100, 10)
+--// ==========================================
+--// WATERMARK (увеличенная в 2.5 раза + фон)
+--// ==========================================
+local WatermarkText = Drawing.new("Text")
+WatermarkText.Text = "QUWES"
+WatermarkText.Size = 50  -- было 20, стало 50 (20 * 2.5)
+WatermarkText.Color = Color3.fromRGB(160, 100, 255)
+WatermarkText.Outline = true
+WatermarkText.OutlineColor = Color3.new(0, 0, 0)
+WatermarkText.Center = false
+WatermarkText.Visible = true
 
-camera:GetPropertyChangedSignal("ViewportSize"):Connect(function()
-    Watermark.Position = Vector2.new(camera.ViewportSize.X - 100, 10)
-end)
+-- Фон для водяного знака
+local WatermarkBg = Drawing.new("Square")
+WatermarkBg.Color = Color3.fromRGB(20, 20, 20)
+WatermarkBg.Filled = true
+WatermarkBg.Visible = true
+
+-- Функция обновления позиции
+local function updateWatermarkPosition()
+    local textSize = WatermarkText.Size
+    -- Примерная ширина текста (грубая оценка, зависит от шрифта)
+    local textWidth = #WatermarkText.Text * textSize * 0.6  -- подгонка
+    local textHeight = textSize * 1.2
+    local x = camera.ViewportSize.X - textWidth - 20  -- отступ от правого края
+    local y = 10
+
+    WatermarkText.Position = Vector2.new(x, y)
+    WatermarkBg.Size = Vector2.new(textWidth + 20, textHeight + 10)
+    WatermarkBg.Position = Vector2.new(x - 10, y - 5)
+end
+
+updateWatermarkPosition()
+
+camera:GetPropertyChangedSignal("ViewportSize"):Connect(updateWatermarkPosition)
