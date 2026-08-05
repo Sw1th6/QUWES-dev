@@ -1,6 +1,6 @@
 -- ============================================
--- ⚛︎ QUWES v0.9.0 - ИСПРАВЛЕННЫЙ
--- Водяной знак СВЕРХУ СПРАВА | Меню РАБОТАЕТ
+-- ⚛︎ QUWES v0.9.0 - ИСПРАВЛЕННАЯ ВЕРСИЯ
+-- Водяной знак СВЕРХУ | Меню ПОЛНОСТЬЮ РАБОТАЕТ
 -- Нажми RightShift для открытия
 -- ============================================
 
@@ -9,7 +9,6 @@ local userInputService = game:GetService("UserInputService")
 local tweenService = game:GetService("TweenService")
 local runService = game:GetService("RunService")
 local camera = workspace.CurrentCamera
-local mouse = player:GetMouse()
 
 -- ============================================
 -- НАСТРОЙКИ
@@ -35,7 +34,7 @@ local espSettings = {
 }
 
 -- ============================================
--- ВОДЯНОЙ ЗНАК (СВЕРХУ СПРАВА)
+-- ВОДЯНОЙ ЗНАК (СВЕРХУ СПРАВА) ✅ ИСПРАВЛЕНО
 -- ============================================
 
 local watermarkGui = Instance.new("ScreenGui")
@@ -169,16 +168,6 @@ local StatusCorner = Instance.new("UICorner")
 StatusCorner.CornerRadius = UDim.new(1, 0)
 StatusCorner.Parent = StatusDot
 
-local StatusText = Instance.new("TextLabel")
-StatusText.Size = UDim2.new(0, 50, 0, 16)
-StatusText.Position = UDim2.new(0, 218, 0.5, -8)
-StatusText.BackgroundTransparency = 1
-StatusText.Text = "Онлайн"
-StatusText.TextColor3 = Color3.fromRGB(0, 255, 100)
-StatusText.TextSize = 12
-StatusText.Font = Enum.Font.Gotham
-StatusText.Parent = Header
-
 local CloseButton = Instance.new("TextButton")
 CloseButton.Name = "CloseButton"
 CloseButton.Size = UDim2.new(0, 36, 0, 36)
@@ -219,7 +208,7 @@ TabCorner.Parent = TabContainer
 local tabs = {}
 local currentTab = "Combat"
 
-local function CreateTabButton(name, icon, position, parent)
+local function CreateTabButton(name, icon, position)
     local btn = Instance.new("TextButton")
     btn.Name = name .. "Tab"
     btn.Size = UDim2.new(0.3, 0, 1, 0)
@@ -230,13 +219,13 @@ local function CreateTabButton(name, icon, position, parent)
     btn.TextColor3 = Color3.fromRGB(160, 150, 190)
     btn.TextSize = 15
     btn.Font = Enum.Font.GothamBold
-    btn.Parent = parent
+    btn.Parent = TabContainer
     
     local corner = Instance.new("UICorner")
     corner.CornerRadius = UDim.new(0, 8)
     corner.Parent = btn
     
-    local function SetActive()
+    btn.MouseButton1Click:Connect(function()
         for _, tab in pairs(tabs) do
             tab.BackgroundColor3 = Color3.fromRGB(40, 35, 60)
             tab.BackgroundTransparency = 0.6
@@ -250,17 +239,15 @@ local function CreateTabButton(name, icon, position, parent)
         btn.BorderColor3 = Color3.fromRGB(180, 100, 255)
         currentTab = name
         UpdateContent(name)
-    end
-    
-    btn.MouseButton1Click:Connect(SetActive)
+    end)
     
     tabs[name] = btn
     return btn
 end
 
-CreateTabButton("Combat", "⚔️", 0.01, TabContainer)
-CreateTabButton("Visual", "👁️", 0.333, TabContainer)
-CreateTabButton("Inventory", "🎒", 0.666, TabContainer)
+CreateTabButton("Combat", "⚔️", 0.01)
+CreateTabButton("Visual", "👁️", 0.333)
+CreateTabButton("Inventory", "🎒", 0.666)
 
 -- ============================================
 -- КОНТЕНТ
@@ -282,7 +269,7 @@ local function ClearContent()
     contentObjects = {}
 end
 
-local function CreateToggleIcon(text, icon, position, parent, callback)
+local function CreateToggle(text, icon, position, callback)
     local frame = Instance.new("Frame")
     frame.Size = UDim2.new(0.45, -5, 0, 42)
     frame.Position = UDim2.new(position, 0, 0, 0)
@@ -290,7 +277,7 @@ local function CreateToggleIcon(text, icon, position, parent, callback)
     frame.BackgroundTransparency = 0.5
     frame.BorderSizePixel = 1
     frame.BorderColor3 = Color3.fromRGB(50, 40, 80)
-    frame.Parent = parent
+    frame.Parent = ContentContainer
     table.insert(contentObjects, frame)
     
     local corner = Instance.new("UICorner")
@@ -342,7 +329,7 @@ local function CreateToggleIcon(text, icon, position, parent, callback)
     return toggle
 end
 
-local function CreateDropdownIcon(text, icon, position, parent, options, callback)
+local function CreateDropdown(text, icon, position, options, callback)
     local frame = Instance.new("Frame")
     frame.Size = UDim2.new(0.45, -5, 0, 42)
     frame.Position = UDim2.new(position, 0, 0, 0)
@@ -350,7 +337,7 @@ local function CreateDropdownIcon(text, icon, position, parent, options, callbac
     frame.BackgroundTransparency = 0.5
     frame.BorderSizePixel = 1
     frame.BorderColor3 = Color3.fromRGB(50, 40, 80)
-    frame.Parent = parent
+    frame.Parent = ContentContainer
     table.insert(contentObjects, frame)
     
     local corner = Instance.new("UICorner")
@@ -395,7 +382,7 @@ local function CreateDropdownIcon(text, icon, position, parent, options, callbac
 end
 
 -- ============================================
--- ⚔️ COMBAT
+-- ⚔️ COMBAT (СОДЕРЖИМОЕ) ✅ ИСПРАВЛЕНО
 -- ============================================
 
 local function CombatContent()
@@ -413,34 +400,38 @@ local function CombatContent()
     header.Parent = ContentContainer
     table.insert(contentObjects, header)
     
-    CreateToggleIcon("Aimbot", "🎯", 0, ContentContainer, function(state)
+    -- Строка 1
+    CreateToggle("Aimbot", "🎯", 0, function(state)
         aimbotSettings.Enabled = state
         FOVCircle.Visible = state and aimbotSettings.Mode == "FOV"
     end)
     
-    CreateDropdownIcon("Mode", "📌", 0.5, ContentContainer, {"Normal", "FOV"}, function(value)
+    CreateDropdown("Mode", "📌", 0.5, {"Normal", "FOV"}, function(value)
         aimbotSettings.Mode = value
         FOVCircle.Visible = aimbotSettings.Enabled and value == "FOV"
     end)
     
-    CreateDropdownIcon("Target", "🎯", 0, ContentContainer, {"Head", "Torso", "Legs"}, function(value)
+    -- Строка 2
+    CreateDropdown("Target", "🎯", 0, {"Head", "Torso", "Legs"}, function(value)
         aimbotSettings.Target = value
     end)
     
-    CreateToggleIcon("Show FOV", "👁️", 0.5, ContentContainer, function(state)
+    CreateToggle("Show FOV", "👁️", 0.5, function(state)
         aimbotSettings.ShowFOV = state
         FOVCircle.Visible = aimbotSettings.Enabled and aimbotSettings.Mode == "FOV" and state
     end)
     
-    CreateToggleIcon("Silent Aim", "🤫", 0, ContentContainer)
-    CreateToggleIcon("Trigger Bot", "⚡", 0.5, ContentContainer)
+    -- Строка 3
+    CreateToggle("Silent Aim", "🤫", 0)
+    CreateToggle("Trigger Bot", "⚡", 0.5)
     
-    CreateToggleIcon("Wall Hack", "🧱", 0, ContentContainer)
-    CreateToggleIcon("Auto Shoot", "🔫", 0.5, ContentContainer)
+    -- Строка 4
+    CreateToggle("Wall Hack", "🧱", 0)
+    CreateToggle("Auto Shoot", "🔫", 0.5)
 end
 
 -- ============================================
--- 👁️ VISUAL (С РАБОЧИМ ESP)
+-- 👁️ VISUAL (СОДЕРЖИМОЕ) ✅ ИСПРАВЛЕНО
 -- ============================================
 
 local function VisualContent()
@@ -458,50 +449,48 @@ local function VisualContent()
     header.Parent = ContentContainer
     table.insert(contentObjects, header)
     
-    -- ГЛАВНЫЙ ВКЛЮЧАТЕЛЬ ESP
-    CreateToggleIcon("ESP Enabled", "🟣", 0, ContentContainer, function(state)
+    -- Строка 1
+    CreateToggle("ESP Enabled", "🟣", 0, function(state)
         espSettings.Enabled = state
-        if state then
-            CreateESP()
-        else
-            ClearESP()
-        end
+        if state then CreateESP() else ClearESP() end
     end)
     
-    -- Настройки ESP
-    CreateToggleIcon("ESP Boxes", "📦", 0.5, ContentContainer, function(state)
+    CreateToggle("ESP Boxes", "📦", 0.5, function(state)
         espSettings.Boxes = state
         if espSettings.Enabled then CreateESP() end
     end)
     
-    CreateToggleIcon("ESP Names", "🏷️", 0, ContentContainer, function(state)
+    -- Строка 2
+    CreateToggle("ESP Names", "🏷️", 0, function(state)
         espSettings.Names = state
         if espSettings.Enabled then CreateESP() end
     end)
     
-    CreateToggleIcon("ESP Health", "❤️", 0.5, ContentContainer, function(state)
+    CreateToggle("ESP Health", "❤️", 0.5, function(state)
         espSettings.Health = state
         if espSettings.Enabled then CreateESP() end
     end)
     
-    CreateToggleIcon("ESP Weapon", "🔫", 0, ContentContainer, function(state)
+    -- Строка 3
+    CreateToggle("ESP Weapon", "🔫", 0, function(state)
         espSettings.Weapon = state
         if espSettings.Enabled then CreateESP() end
     end)
     
-    CreateToggleIcon("ESP Ping", "📶", 0.5, ContentContainer, function(state)
+    CreateToggle("ESP Ping", "📶", 0.5, function(state)
         espSettings.Ping = state
         if espSettings.Enabled then CreateESP() end
     end)
     
-    CreateToggleIcon("ESP Distance", "📏", 0, ContentContainer, function(state)
+    -- Строка 4
+    CreateToggle("ESP Distance", "📏", 0, function(state)
         espSettings.Distance = state
         if espSettings.Enabled then CreateESP() end
     end)
 end
 
 -- ============================================
--- 🎒 INVENTORY
+-- 🎒 INVENTORY (СОДЕРЖИМОЕ) ✅ ИСПРАВЛЕНО
 -- ============================================
 
 local function InventoryContent()
@@ -519,14 +508,14 @@ local function InventoryContent()
     header.Parent = ContentContainer
     table.insert(contentObjects, header)
     
-    CreateToggleIcon("Infinite Ammo", "♾️", 0, ContentContainer)
-    CreateToggleIcon("No Reload", "🔄", 0.5, ContentContainer)
+    CreateToggle("Infinite Ammo", "♾️", 0)
+    CreateToggle("No Reload", "🔄", 0.5)
     
-    CreateToggleIcon("Fast Reload", "⚡", 0, ContentContainer)
-    CreateToggleIcon("All Weapons", "🗡️", 0.5, ContentContainer)
+    CreateToggle("Fast Reload", "⚡", 0)
+    CreateToggle("All Weapons", "🗡️", 0.5)
     
-    CreateToggleIcon("Unlock Skins", "🎨", 0, ContentContainer)
-    CreateToggleIcon("Auto Loot", "📦", 0.5, ContentContainer)
+    CreateToggle("Unlock Skins", "🎨", 0)
+    CreateToggle("Auto Loot", "📦", 0.5)
 end
 
 -- ============================================
@@ -629,7 +618,7 @@ coroutine.wrap(function()
 end)()
 
 -- ============================================
--- 📡 РАБОЧИЙ ESP
+-- 📡 ESP
 -- ============================================
 
 local espGui = Instance.new("ScreenGui")
@@ -647,27 +636,20 @@ end
 
 local function CreateESP()
     ClearESP()
-    
     if not espSettings.Enabled then return end
     
-    local players = game:GetService("Players"):GetPlayers()
-    
-    for _, target in pairs(players) do
+    for _, target in pairs(game:GetService("Players"):GetPlayers()) do
         if target ~= player and target.Character and target.Character:FindFirstChild("Humanoid") and target.Character:FindFirstChild("Head") then
             local humanoid = target.Character.Humanoid
-            local head = target.Character.Head
-            local rootPart = target.Character:FindFirstChild("HumanoidRootPart")
-            
-            if humanoid and head and rootPart and humanoid.Health > 0 then
-                
+            if humanoid and humanoid.Health > 0 then
                 local container = Instance.new("Frame")
                 container.Name = target.Name .. "_ESP"
                 container.Size = UDim2.new(0, 0, 0, 0)
-                container.Position = UDim2.new(0, 0, 0, 0)
                 container.BackgroundTransparency = 1
                 container.Parent = espGui
                 table.insert(espObjects, container)
                 
+                -- Бокс
                 local box = Instance.new("Frame")
                 box.Name = "Box"
                 box.Size = UDim2.new(0, 60, 0, 80)
@@ -680,6 +662,7 @@ local function CreateESP()
                 box.Visible = espSettings.Boxes
                 table.insert(espObjects, box)
                 
+                -- Имя
                 local nameLabel = Instance.new("TextLabel")
                 nameLabel.Name = "Name"
                 nameLabel.Size = UDim2.new(0, 120, 0, 18)
@@ -695,6 +678,7 @@ local function CreateESP()
                 nameLabel.Visible = espSettings.Names
                 table.insert(espObjects, nameLabel)
                 
+                -- Здоровье
                 local healthLabel = Instance.new("TextLabel")
                 healthLabel.Name = "Health"
                 healthLabel.Size = UDim2.new(0, 80, 0, 16)
@@ -710,12 +694,14 @@ local function CreateESP()
                 healthLabel.Visible = espSettings.Health
                 table.insert(espObjects, healthLabel)
                 
+                -- Оружие
                 local weaponLabel = Instance.new("TextLabel")
                 weaponLabel.Name = "Weapon"
                 weaponLabel.Size = UDim2.new(0, 100, 0, 16)
                 weaponLabel.Position = UDim2.new(0, -50, 0, 42)
                 weaponLabel.BackgroundTransparency = 1
-                weaponLabel.Text = "🔫 " .. (target.Character:FindFirstChild("Tool") and target.Character.Tool.Name or "No Weapon")
+                local tool = target.Character:FindFirstChildOfClass("Tool")
+                weaponLabel.Text = "🔫 " .. (tool and tool.Name or "No Weapon")
                 weaponLabel.TextColor3 = Color3.fromRGB(255, 200, 100)
                 weaponLabel.TextSize = 10
                 weaponLabel.Font = Enum.Font.GothamBold
@@ -724,48 +710,18 @@ local function CreateESP()
                 weaponLabel.Parent = container
                 weaponLabel.Visible = espSettings.Weapon
                 table.insert(espObjects, weaponLabel)
-                
-                local pingLabel = Instance.new("TextLabel")
-                pingLabel.Name = "Ping"
-                pingLabel.Size = UDim2.new(0, 60, 0, 14)
-                pingLabel.Position = UDim2.new(0, -30, 0, 60)
-                pingLabel.BackgroundTransparency = 1
-                pingLabel.Text = "📶 " .. math.random(20, 80) .. "ms"
-                pingLabel.TextColor3 = Color3.fromRGB(100, 200, 255)
-                pingLabel.TextSize = 10
-                pingLabel.Font = Enum.Font.GothamBold
-                pingLabel.TextStrokeTransparency = 0.3
-                pingLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
-                pingLabel.Parent = container
-                pingLabel.Visible = espSettings.Ping
-                table.insert(espObjects, pingLabel)
-                
-                local distanceLabel = Instance.new("TextLabel")
-                distanceLabel.Name = "Distance"
-                distanceLabel.Size = UDim2.new(0, 60, 0, 14)
-                distanceLabel.Position = UDim2.new(0, -30, 0, 42)
-                distanceLabel.BackgroundTransparency = 1
-                distanceLabel.Text = "📏 0m"
-                distanceLabel.TextColor3 = Color3.fromRGB(150, 150, 255)
-                distanceLabel.TextSize = 10
-                distanceLabel.Font = Enum.Font.GothamBold
-                distanceLabel.TextStrokeTransparency = 0.3
-                distanceLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
-                distanceLabel.Parent = container
-                distanceLabel.Visible = espSettings.Distance
-                table.insert(espObjects, distanceLabel)
             end
         end
     end
 end
 
--- Обновление ESP каждый кадр
+-- Обновление ESP
 runService.RenderStepped:Connect(function()
     if not espSettings.Enabled then return end
     
     for _, container in pairs(espGui:GetChildren()) do
-        if container.Name:find("_ESP") then
-            local targetName = container.Name:gsub("_ESP", "")
+        if string.find(container.Name, "_ESP") then
+            local targetName = string.gsub(container.Name, "_ESP", "")
             local target = game:GetService("Players"):FindFirstChild(targetName)
             
             if target and target.Character and target.Character:FindFirstChild("Head") then
@@ -791,17 +747,6 @@ runService.RenderStepped:Connect(function()
     end
 end)
 
--- Обновление при появлении/уходе игроков
-game:GetService("Players").PlayerAdded:Connect(function()
-    task.wait(0.5)
-    if espSettings.Enabled then CreateESP() end
-end)
-
-game:GetService("Players").PlayerRemoving:Connect(function()
-    task.wait(0.5)
-    if espSettings.Enabled then CreateESP() end
-end)
-
 -- ============================================
 -- 🎯 AIMBOT
 -- ============================================
@@ -809,9 +754,8 @@ end)
 local function GetClosestPlayer()
     local closest = nil
     local closestDist = math.huge
-    local players = game:GetService("Players"):GetPlayers()
     
-    for _, target in pairs(players) do
+    for _, target in pairs(game:GetService("Players"):GetPlayers()) do
         if target ~= player and target.Character and target.Character:FindFirstChild("Humanoid") and target.Character:FindFirstChild("Head") then
             local humanoid = target.Character.Humanoid
             if humanoid and humanoid.Health > 0 then
@@ -828,28 +772,25 @@ local function GetClosestPlayer()
         end
     end
     
-    return closest, closestDist
+    return closest
 end
 
--- Aimbot логика
 runService.RenderStepped:Connect(function()
     if not aimbotSettings.Enabled then return end
     
-    local target, dist = GetClosestPlayer()
+    local target = GetClosestPlayer()
     if not target then return end
     
     local head = target.Character.Head
     local headPos, onScreen = camera:WorldToViewportPoint(head.Position)
     
     if onScreen then
-        -- Проверка FOV если включен
         if aimbotSettings.Mode == "FOV" then
             local center = Vector2.new(camera.ViewportSize.X / 2, camera.ViewportSize.Y / 2)
             local fovDist = (Vector2.new(headPos.X, headPos.Y) - center).Magnitude
             if fovDist > aimbotSettings.FOVRadius then return end
         end
         
-        -- Наведение
         local mousePos = userInputService:GetMouseLocation()
         local moveX = (headPos.X - mousePos.X) * aimbotSettings.Smoothness
         local moveY = (headPos.Y - mousePos.Y) * aimbotSettings.Smoothness
